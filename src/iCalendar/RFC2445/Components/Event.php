@@ -43,7 +43,7 @@ use Battis\Calendar\iCalendar\RFC2445\Properties\Recurrence\RecurrenceRule;
 
 class Event extends Component {
 	
-	protected static $validProperties = [
+	protected static $validPropertyTypes = [
 		Classification::class => Property::OPTIONAL_SINGLETON,
 		Created::class => Property::OPTIONAL_SINGLETON,
 		Description::class => Property::OPTIONAL_SINGLETON,
@@ -79,7 +79,7 @@ class Event extends Component {
 		RecurrenceRule::class => Property::OPTIONAL_MULTIPLE
 	];
 
-	protected static $validComponents = [
+	protected static $validComponentTypes = [
 		Alarm::class
 	];
 	

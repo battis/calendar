@@ -21,7 +21,7 @@ use Battis\Calendar\iCalendar\RFC2445\Properties\Nonstandard\RequestStatus;
 
 class FreeBusy extends Component {
 	
-	protected static $validProperties = [
+	protected static $validPropertyTypes = [
 		Contact::class => Property::OPTIONAL_SINGLETON,
 		Start::class => Property::OPTIONAL_SINGLETON,
 		End::class => Property::OPTIONAL_SINGLETON,

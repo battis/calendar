@@ -9,7 +9,7 @@ class URL extends Property {
 	
 	protected $name = 'URL';
 	
-	public static $validValueTypes = [
+	protected static $validValueTypes = [
 		URI::class
 	];
 }

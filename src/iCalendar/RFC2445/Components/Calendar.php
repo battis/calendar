@@ -17,7 +17,7 @@ use Battis\Calendar\Exceptions\CalendarException;
 class Calendar extends Component {
 	
 	/** @inheritdoc */
-	protected static $validProperties = [
+	protected static $validPropertyTypes = [
 		ProductIdentifier::class => Property::REQUIRED_SINGLETON,
 		Version::class => Property::REQUIRED_SINGLETON,
 
@@ -26,7 +26,7 @@ class Calendar extends Component {
 	];
 	
 	/** @inheritdoc */
-	protected static $validComponents = [
+	protected static $validComponentTypes = [
 		Event::class,
 		ToDo::class,
 		Journal::class,

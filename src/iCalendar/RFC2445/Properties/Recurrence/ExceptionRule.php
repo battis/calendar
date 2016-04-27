@@ -9,7 +9,7 @@ class ExceptionRule extends Property {
 	
 	protected $name = 'EXRULE';
 	
-	public static $validValueTypes = [
+	protected static $validValueTypes = [
 		RecurrenceRule::class,
 	];
 }

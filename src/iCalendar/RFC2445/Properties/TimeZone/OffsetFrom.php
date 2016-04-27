@@ -9,7 +9,7 @@ class OffsetFrom extends Property {
 	
 	protected $name = 'TZOFFSETFROM';
 	
-	public static $validValueTypes = [
+	protected static $validValueTypes = [
 		UTCOffset::class
 	];
 }

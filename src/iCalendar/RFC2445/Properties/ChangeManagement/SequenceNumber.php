@@ -2,14 +2,9 @@
 	
 namespace Battis\Calendar\iCalendar\RFC2445\Properties\ChangeManagement;
 
-use Battis\Calendar\iCalendar\RFC2445\Property;
-use Battis\Calendar\iCalendar\RFC2445\Values\Integer;
+use Battis\Calendar\iCalendar\RFC2445\Properties\IntegerProperty;
 
-class SequenceNumber extends Property {
+class SequenceNumber extends IntegerProperty {
 	
 	protected $name = 'SEQ';
-	
-	public static $validValueTypes = [
-		Integer::class
-	];
 }

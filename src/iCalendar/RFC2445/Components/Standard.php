@@ -17,7 +17,7 @@ use Battis\Calendar\iCalendar\RFC2445\Properties\TimeZone\Name;
 
 class Standard extends Component {
 	
-	protected static $validProperties = [
+	protected static $validPropertyTypes = [
 		Start::class => Property::REQUIRED_SINGLETON,
 		OffsetTo::class => Property::REQUIRED_SINGLETON,
 		OffsetFrom::class => Property::REQUIRED_SINGLETON,

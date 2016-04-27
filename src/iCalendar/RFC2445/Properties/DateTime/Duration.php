@@ -2,13 +2,14 @@
 
 namespace Battis\Calendar\iCalendar\RFC2445\Properties\DateTime;
 
+use Battis\Calendar\iCalendar\RFC2445\Property;
 use Battis\Calendar\iCalendar\RFC2445\Values\Duration;
 
-class Duration extends DefaultDateTimeProperty {
+class Duration extends Property {
 	
 	protected $name = 'DURATION';
 	
-	public static $validValueTypes = [
+	protected static $validValueTypes = [
 		Duration::class
 	];
 }

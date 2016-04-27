@@ -2,7 +2,7 @@
 	
 namespace Battis\Calendar\iCalendar\RFC2445;
 
-require_once __DIR__ . '/grammar.php';
+require_once 'grammar.php';
 
 use Battis\Calendar\Parseable;
 use Battis\Calendar\Saveable;
@@ -10,7 +10,7 @@ use Battis\Calendar\iCalendar\RFC2445\Properties\Nonstandard\XProperty;
 use Battis\Calendar\Exceptions\ParseableException;
 use Battis\Calendar\iCalendar\Exceptions\ComponentException;
 
-abstract class Component extends Parseable /* TODO implements Saveable */ {
+abstract class Component implements Parseable /* TODO implements Saveable */ {
 
 	/** @var string */
 	protected static $buffer = null;
@@ -22,16 +22,56 @@ abstract class Component extends Parseable /* TODO implements Saveable */ {
 	protected static $componentBeingParsed = null;
 			
 	/** @var Property[] */
-	protected $properties = [];
+	protected $properties;
 	
 	/** @var Component[] */
-	protected $components = [];
+	protected $components;
 
 	/** @var string[] */
-	protected static $validComponents = [];
+	protected static $validComponentTypes = [];
 	
 	/** @var string[] */
-	protected static $validProperties = [];
+	protected static $validPropertyTypes = [];
+	
+	/**
+	 * Parse an input string or stream to create an object
+	 * 
+	 * The check to see if the file exists on another domain is {@link
+	 * http://www.brightcherry.co.uk/scribbles/php-check-if-file-exists-on-different-domain/
+	 * modeled on BrightCherry's example}
+	 *
+	 * Thanks to {@link https://evertpot.com/222/ Evert Pot} for the example of
+	 * reading a string as a stream.
+	 *
+	 * @param string|resource $input A filename, URL or literal string to be parsed.
+	 * @return Parseable
+	 */
+	public static function parse($input) {
+		$stream = null;
+		
+		if (is_string($input)) {
+			if (
+				file_exists($input) ||
+				(
+					preg_match('%.+://.+%', $input) &&
+					strpos(get_headers($input, 1)[0], '404') === false
+				)
+			) {
+				$stream = fopen($input, 'r');
+			} else {
+				ini_set('auto_detect_line_endings', true);
+				$stream = fopen('php://memory', 'r+');
+				fwrite($stream, $input);
+				rewind($stream);
+			}
+		} elseif (is_resource($input)) {
+			$stream =& $input;
+		} else {
+			throw new ParseableException('Cannot parse `' . (is_object($input) ? get_class($input) : gettype($input)) . '`');
+		}
+		
+		return static::parseStream($stream);
+	}
 	
 	/**
 	 * @pre $stream is a valid input stream
@@ -107,24 +147,27 @@ abstract class Component extends Parseable /* TODO implements Saveable */ {
 		return $contentLine;
 	}
 
-	public function get(string $name) {
-		$properties = array();
-		foreach ($this->properties as $property) {
-			if ($property->getName() == $name) {
-				$properties[] = $property;
+	public function get($propertyClass) {
+		$matchingProperties = array();
+		if (is_array($this->properties)) {
+			foreach ($this->properties as $property) {
+				if ($property->getName() == $name) {
+					$matchingProperties[] = $property;
+				}
 			}
+			return $matchingProperties;
 		}
-		return $properties;
+		return false;
 	}
 	
 	public function set(Property ...$properties) {
 		$propertyWasSet = true;
 		foreach($properties as $property) {
 			if ($this->isValidProperty($property)) {
-				if (!in_array($property, $this->properties)) {
-					$this->properties[] = $property;
-				} else {
+				if (is_array($this->properties) && in_array($property, $this->properties)) {
 					$propertyWasSet = false;
+				} else {
+					$this->properties[] = $property;
 				}
 			} else {
 				throw new ComponentException('Invalid property `' . $property->getName() . '`');
@@ -134,30 +177,33 @@ abstract class Component extends Parseable /* TODO implements Saveable */ {
 	}
 		
 	protected function isValidProperty(Property $property) {
-		return is_a($property, XProperty::class) || array_key_exists(get_class($property), static::$validProperties);
+		return is_a($property, XProperty::class) || array_key_exists(get_class($property), static::$validPropertyTypes);
 	}
 	
 	public function getComponents(string ...$componentTypes) {
 		$components = array();
-		foreach ($this->components as $component) {
-			foreach ($componentTypes as $componentType) {
-				if (is_a($component, $componentType)) {
-					$components[] = $component;
-					break;
+		if (is_array($this->components)) {
+			foreach ($this->components as $component) {
+				foreach ($componentTypes as $componentType) {
+					if (is_a($component, $componentType)) {
+						$components[] = $component;
+						break;
+					}
 				}
 			}
+			return $components;
 		}
-		return $components;
+		return false;
 	}
 	
 	public function add(Component ...$components) {
 		$componentWasAdded = true;
 		foreach($components as $component) {
 			if ($this->isValidComponent($component)) {
-				if (!in_array($component, $this->components)) {
-					$this->components[] = $component;
-				} else {
+				if (is_array($this->components) && in_array($component, $this->components)) {
 					$componentWasAdded = false;
+				} else {
+					$this->components[] = $component;
 				}
 			} else {
 				throw new ComponentException('Invalid component `' . get_class(Component) . '`');
@@ -167,7 +213,7 @@ abstract class Component extends Parseable /* TODO implements Saveable */ {
 	}
 	
 	protected function isValidComponent(Component $component) {
-		return in_array(get_class($component), static::$validComponents);
+		return in_array(get_class($component), static::$validComponentTypes);
 	}
 	
 	public function isValid(Component &$containingComponent = null) {

@@ -23,7 +23,7 @@ define('VALUE', '[' . VALUE_CHAR . ']*');
 
 define('IANA_TOKEN', '[' . ALPHA . DIGIT . '\-]+');
 define('VENDOR_ID', '[' . ALPHA . DIGIT . ']{3,3}');
-define('X_NAME', 'X-(' . VENDOR_ID . '-)?' . IANA_TOKEN);
+define('X_NAME', 'X-(' . VENDOR_ID . '-)?[' . ALPHA . DIGIT . '\-]+');
 define('NAME', '((' . IANA_TOKEN . ')|(' . X_NAME . '))');
 	
 define('PARAMTEXT', '[' . SAFE_CHAR . ']*');

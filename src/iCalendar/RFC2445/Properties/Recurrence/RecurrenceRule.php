@@ -9,7 +9,7 @@ class RecurrenceRule extends Property {
 	
 	protected $name = 'RRULE';
 	
-	public static $validValueTypes = [
+	protected static $validValueTypes = [
 		RecurrenceRuleValue::class,
 	];
 }

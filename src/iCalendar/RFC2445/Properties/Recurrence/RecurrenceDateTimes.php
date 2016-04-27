@@ -11,7 +11,7 @@ class RecurrenceDateTimes extends Property {
 	
 	protected $name = 'RDATE';
 	
-	public static $validValueTypes = [
+	protected static $validValueTypes = [
 		DateTime::class,
 		Date::class,
 		Period::class

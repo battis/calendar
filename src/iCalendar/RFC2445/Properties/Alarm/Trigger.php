@@ -10,7 +10,7 @@ class Trigger extends Property {
 	
 	protected $name = 'TRIGGER';
 	
-	public static $validValueTypes = [
+	protected static $validValueTypes = [
 		Duration::class,
 		DateTime::class
 	];

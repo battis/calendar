@@ -2,7 +2,7 @@
 	
 namespace Battis\Calendar\iCalendar\RFC2445;
 
-require_once __DIR__ . '/grammar.php';
+require_once 'grammar.php';
 
 use Battis\Calendar\Parseable;
 use Battis\Calendar\Saveable;
@@ -10,49 +10,43 @@ use Battis\Calendar\iCalendar\RFC2445\Properties\Nonstandard\XProperty;
 use Battis\Calendar\iCalendar\RFC2445\Properties\Nonstandard\IANAProperty;
 use Battis\Calendar\iCalendar\Exceptions\PropertyException;
 
-class Property extends Parseable /* TODO implements Saveable */ {
+class Property implements Parseable /* TODO implements Saveable */ {
 	
-	const REQUIRED_SINGLETON = '1';
-	const REQUIRED_MULTIPLE = '2';
-	const OPTIONAL_SINGLETON = '3';
-	const OPTIONAL_MULTIPLE = '4';
+	const REQUIRED_SINGLETON = 'req_once';
+	const REQUIRED_MULTIPLE = 'req';
+	const OPTIONAL_SINGLETON = 'opt_once';
+	const OPTIONAL_MULTIPLE = 'opt';
 	
 	/** @var string[] */
-	protected static $validParameters = [];
+	protected static $validParameterTypes = [];
 	
-	public static $validValueTypes = [];
+	/** @var string[] */
+	protected static $validValueTypes = [];
+	
+	/** @var Value[] */
+	protected static $validValues = [];
 	
 	/** @var string */
 	protected $name;
 	
 	/** @var Parameter[] */
-	protected $parameters = [];
+	protected $parameters;
 
 	/** @var Value */
 	protected $value;
 	
-	public static function parse(&$input) {
+	public static function parse($input) {
 		preg_match('/' . CONTENTLINE . '/', $input, $contentLineMatches, PREG_OFFSET_CAPTURE);
 		$propertyType = static::getPropertyClass($contentLineMatches[CONTENTLINE_NAME][REGEX_MATCH]);
 		$value = $contentLineMatches[CONTENTLINE_VALUE][REGEX_MATCH];
 
-		preg_match_all(
-			'/' . PARAM . '/',
-			substr(
+		$parameters = Parameter::parse(substr(
 				$input,
 				strlen($contentLineMatches[CONTENTLINE_NAME][REGEX_MATCH]) + 1, // include ; or :
 				$contentLineMatches[CONTENTLINE_VALUE][REGEX_OFFSET] -
 					strlen($contentLineMatches[CONTENTLINE_NAME][REGEX_MATCH]) - 2 // include ; and :
-			),
-			$parameterMatches,
-			PREG_SET_ORDER
+			)
 		);
-		
-		$parameters = [];
-		foreach($parameterMatches as $match) {
-			/* FIXME this probably isn't right */
-			$parameters[$match[PARAMETER_NAME]] = new Parameter($match[PARAMETER_NAME], $match[PARAMETER_VALUE]);
-		}
 		
 		if (empty($propertyType::$validValueTypes)) {
 			throw new PropertyException("Property `$propertyType` is missing a list valid value types");
@@ -85,11 +79,6 @@ class Property extends Parseable /* TODO implements Saveable */ {
 	protected function constructFromParameters(Value $value, Parameter ...$parameters) {
 		$this->setValue($value);
 		$this->set(...$parameters);
-	}
-	
-	protected static function parseStream(&$input) {
-		/* TODO find nicer wording for this exception */
-		throw new ParseableException('It is not meaningful to parse a property from a stream');
 	}
 
 	protected static function getPropertyClass($propertySpecification) {
@@ -296,7 +285,7 @@ class Property extends Parseable /* TODO implements Saveable */ {
 	}
 	
 	protected function isValidValue(Value $value) {
-		return !empty(static::$validValueTypes) && in_array(get_class($value), static::$validValueTypes);
+		return !empty(static::$validValueTypes) && in_array(get_class($value), static::$validValueTypes) && (empty(static::$validValues) || in_array($value, static::$validValues));
 	}
 
 	public function get(string $parameterName) {
@@ -310,10 +299,10 @@ class Property extends Parseable /* TODO implements Saveable */ {
 		$parametersWereAdded = true;
 		foreach ($parameters as $parameter) {
 			if ($this->isValidParameter($parameter)) {
-				if(!in_array($parameter, $this->parameters)) {
-					$this->parameters[] = $parameter;
-				} else {
+				if(is_array($this->parameters) && in_array($parameter, $this->parameters)) {
 					$parametersWereAdded = false;
+				} else {
+					$this->parameters[] = $parameter;
 				}
 			} else {
 				throw new PropertyException('Invalid parameter `' . $parameter->getName() .'`');

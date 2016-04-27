@@ -2,14 +2,9 @@
 
 namespace Battis\Calendar\iCalendar\RFC2445\Properties\Alarm;
 
-use Battis\Calendar\iCalendar\RFC2445\Property;
-use Battis\Calendar\iCalendar\RFC2445\Values\Integer;
+use Battis\Calendar\iCalendar\RFC2445\Properties\IntegerProperty;
 
-class RepeatCount extends Property {
+class RepeatCount extends IntegerProperty {
 	
 	protected $name = 'REPEAT';
-	
-	public static $validValueTypes = [
-		Integer::class
-	];
 }

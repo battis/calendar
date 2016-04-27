@@ -2,16 +2,9 @@
 	
 namespace Battis\Calendar\iCalendar\RFC2445\Properties\Recurrence;
 
-use Battis\Calendar\iCalendar\RFC2445\Property;
-use Battis\Calendar\iCalendar\RFC2445\Values\DateTime;
-use Battis\Calendar\iCalendar\RFC2445\Values\Date;
+use Battis\Calendar\iCalendar\RFC2445\Properties\DefaultDateTimeProperty;
 
-class ExceptionDateTimes extends Property {
+class ExceptionDateTimes extends DefaultDateTimeProperty {
 	
 	protected $name = 'EXDATE';
-	
-	public static $validValueTypes = [
-		DateTime::class,
-		Date::class
-	];
 }

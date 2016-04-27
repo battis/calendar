@@ -9,7 +9,7 @@ class Duration extends Property {
 	
 	protected $name = 'FREEBUSY';
 
-	public static $validValueTypes = [
+	protected static $validValueTypes = [
 		Period::class
 	];	
 }

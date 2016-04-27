@@ -3,11 +3,11 @@
 namespace Battis\Calendar\iCalendar\RFC2445\Properties;
 
 use Battis\Calendar\iCalendar\RFC2445\Property;
-use Battis\Calendar\iCalendar\RFC2445\Values\Text;
+use Battis\Calendar\iCalendar\RFC2445\Values\Float;
 
-class TextProperty extends Property {
+class FloatProperty extends Property {
 	
 	protected static $validValueTypes = [
-		Text::class
+		Float::class
 	];
 }

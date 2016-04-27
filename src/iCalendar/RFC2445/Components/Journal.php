@@ -33,7 +33,7 @@ use Battis\Calendar\iCalendar\RFC2445\Properties\Nonstandard\RequestStatus;
 
 class Journal extends Component {
 	
-	protected static $validProperties = [
+	protected static $validPropertyTypes = [
 		Classificatin:::class => Property::OPTIONAL_SINGLETON,
 		Created::class => Property::OPTIONAL_SINGLETON,
 		Description::class => Property::OPTIONAL_SINGLETON,

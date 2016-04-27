@@ -6,24 +6,19 @@ use Battis\Calendar\Parseable;
 use Battis\Calendar\Saveable;
 use Battis\Calendar\iCalendar\Exceptions\ValueException;
 
-abstract class Value extends Parseable /* TODO implements Saveable */ {
+abstract class Value implements Parseable /* TODO implements Saveable */ {
 	
 	/** @var string */
 	protected $name;
 	
 	protected $value;
 	
-	public static function parse(&$input) {
+	public static function parse($input) {
 		/* FIXME take a closer look at this hack */
 		$valueType = get_called_class();
 		$value = new $valueType();
 		$value->set($input);
 		return $value;
-	}
-	
-	protected static function parseStream(&$input) {
-		/* TODO find nicer wording for this exception */
-		throw new ParseableException('It is not meaningful to parse a value from a stream');
 	}
 	
 	public static function getValueClass($valueSpecification) {

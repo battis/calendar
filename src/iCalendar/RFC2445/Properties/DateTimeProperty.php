@@ -7,7 +7,7 @@ use Battis\Calendar\iCalendar\RFC2445\Values\DateTime;
 
 class DateTimeProperty extends Property {
 	
-	public static $validValueTypes = [
+	protected static $validValueTypes = [
 		DateTime::class
 	];
 }

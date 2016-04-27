@@ -42,7 +42,7 @@ use Battis\Calendar\iCalendar\RFC2445\Properties\Recurrence\RecurrenceRule;
 
 class ToDo extends Component {
 	
-	protected static $validProperties = [
+	protected static $validPropertyTypes = [
 		Classification::class => Property::OPTIONAL_SINGLETON,
 		Completed::class => Property::OPTIONAL_SINGLETON,
 		Created::class => Property::OPTIONAL_SINGLETON,
@@ -79,7 +79,7 @@ class ToDo extends Component {
 		RecurrenceRule::class => Property::OPTIONAL_MULTIPLE
 	];
 	
-	protected static $validComponents = [
+	protected static $validComponentTypes = [
 		Alarm::class
 	];
 	

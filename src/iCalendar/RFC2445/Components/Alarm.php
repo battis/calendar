@@ -19,12 +19,12 @@ class Alarm extends Component {
 	const DISPLAY_ACTION = 'DISPLAY';
 	const EMAIL_ACTION = 'EMAIL';
 	
-	protected static $validProperties = [
+	protected static $validPropertyTypes = [
 		Action::class => Property::REQUIRED_SINGLETON,
 		Trigger::class => Property::REQUIRED_SINGLETON
 	];
 	
-	protected $instanceValidProperties = [];
+	protected $instanceValidPropertTypes = [];
 	
 	protected function isValidProperty(Property $property) {
 		/* FIXME this isn't right */

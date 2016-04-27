@@ -11,14 +11,14 @@ use Battis\Calendar\iCalendar\RFC2445\Properties\ChangeManagement\LastModified;
 
 class TimeZone extends Component {
 	
-	protected static $validProperties = [
+	protected static $validPropertyTypes = [
 		Identifier::class => Property::REQUIRED_SINGLETON,
 		
 		LastModified::class => Property::OPTIONAL_SINGLETON,
 		URL::class => Property::OPTIONAL_SINGLETON
 	];
 	
-	protected static $validComponents = [
+	protected static $validComponentTypes = [
 		Standard::class,
 		Daylight::class
 	];

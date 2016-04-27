@@ -2,14 +2,9 @@
 
 namespace Battis\Calendar\iCalendar\RFC2445\Properties\Descriptive;
 
-use Battis\Calendar\iCalendar\RFC2445\Property;
-use Battis\Calendar\iCalendar\RFC2445\Values\Integer;
+use Battis\Calendar\iCalendar\RFC2445\Properties\IntegerProperty;
 
-class Priority extends Property {
+class Priority extends IntegerProperty {
 	
 	protected $name = 'PRIORITY';
-	
-	public static $validValueTypes = [
-		Integer::class
-	];
 }

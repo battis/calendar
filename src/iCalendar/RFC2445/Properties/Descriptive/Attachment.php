@@ -10,7 +10,7 @@ class Attachment extends Property {
 	
 	protected $name = 'ATTACH';
 	
-	public static $validValueTypes = [
+	protected static $validValueTypes = [
 		URI::class,
 		Binary::class
 	];

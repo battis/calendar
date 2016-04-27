@@ -9,7 +9,7 @@ class Attendee extends Property {
 	
 	protected $name = 'ATTENDEE';
 	
-	public static $validValueTypes = [
+	protected static $validValueTypes = [
 		CalendarUserAddress::class
 	];
 }

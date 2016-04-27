@@ -9,7 +9,7 @@ class Organizer extends Property {
 	
 	protected $name = 'ORGANIZER';
 	
-	public static $validValueTypes = [
+	protected static $validValueTypes = [
 		CalendarUserAddress::class
 	];
 }
