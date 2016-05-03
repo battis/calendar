@@ -1,0 +1,25 @@
+BEGIN:VCALENDAR
+PRODID:battis/calendar Test
+VERSION:2.0
+BEGIN:VEVENT
+UID:19970901T130000Z-123402@example.com
+DTSTAMP:19970901T130000Z
+DTSTART:19970401T163000Z
+DTEND:19970402T010000Z
+SUMMARY:Laurel is in sensitivity awareness class.
+CLASS:PUBLIC
+CATEGORIES:BUSINESS,HUMAN RESOURCES
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+TRIGGER;RELATED=END:-P2D
+ACTION:EMAIL
+ATTENDEE:mailto:john_doe@example.com
+SUMMARY:*** REMINDER: SEND AGENDA FOR WEEKLY STAFF MEETING ***
+DESCRIPTION:A draft agenda needs to be sent out to the attendees
+  to the weekly managers meeting (MGR-LIST). Attached is a
+  pointer the document template for the agenda file.
+ATTACH;FMTTYPE=application/msword:http://example.com/
+ templates/agenda.doc
+END:VALARM
+END:VEVENT
+END:VCALENDAR
