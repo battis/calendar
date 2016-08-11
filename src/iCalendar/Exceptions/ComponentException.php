@@ -1,5 +1,7 @@
 <?php
-	
+
 namespace Battis\Calendar\iCalendar\Exceptions;
 
-class ComponentException extends CalendarException {}
+class ComponentException extends CalendarException
+{
+}

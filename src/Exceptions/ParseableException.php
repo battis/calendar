@@ -1,5 +1,7 @@
 <?php
-	
+
 namespace Battis\Calendar\Exceptions;
 
-class ParseableException extends Exception {}
+class ParseableException extends Exception
+{
+}

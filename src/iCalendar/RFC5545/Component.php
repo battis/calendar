@@ -9,19 +9,19 @@ use Battis\Calendar\Exceptions\ParseableException;
 use Battis\Calendar\iCalendar\Exceptions\ComponentException;
 
 /**
-Component
-
-{@link https://tools.ietf.org/rfcmarkup/5545#section-3.6 RFC 5545 &sect;3.6}
-```RFC
-   The body of the iCalendar object consists of a sequence of calendar
-   properties and one or more calendar components.  The calendar
-   properties are attributes that apply to the calendar object as a
-   whole.  The calendar components are collections of properties that
-   express a particular calendar semantic.  For example, the calendar
-   component can specify an event, a to-do, a journal entry, time zone
-   information, free/busy time information, or an alarm.
-```
-*/
+ * Component
+ *
+ * {@link https://tools.ietf.org/rfcmarkup/5545#section-3.6 RFC 5545 &sect;3.6}
+ * ```RFC
+ *    The body of the iCalendar object consists of a sequence of calendar
+ *    properties and one or more calendar components.  The calendar
+ *    properties are attributes that apply to the calendar object as a
+ *    whole.  The calendar components are collections of properties that
+ *    express a particular calendar semantic.  For example, the calendar
+ *    component can specify an event, a to-do, a journal entry, time zone
+ *    information, free/busy time information, or an alarm.
+ * ```
+ */
 abstract class Component implements Parseable, ContentLine /* TODO implements Saveable */ {
 
 	/** @var string */

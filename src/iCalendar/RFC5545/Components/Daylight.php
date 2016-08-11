@@ -2,4 +2,6 @@
 
 namespace Battis\Calendar\iCalendar\RFC5545\Components;
 
-class Daylight extends Standard {}
+class Daylight extends Standard
+{
+}

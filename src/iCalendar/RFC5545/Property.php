@@ -9,27 +9,27 @@ use Battis\Calendar\iCalendar\RFC5545\Properties\Miscellaneous\IANAProperty;
 use Battis\Calendar\iCalendar\Exceptions\PropertyException;
 
 /**
-Property
-
-{@link https://tools.ietf.org/rfcmarkup/5545#section-3.5 RFC 5545 &sect;3.5}
-```RFC
-   A property is the definition of an individual attribute describing a
-   calendar object or a calendar component.  A property takes the form
-   defined by the "contentline" notation defined in Section 3.1.
-
-   The following is an example of a property:
-
-       DTSTART:19960415T133000Z
-
-   This memo imposes no ordering of properties within an iCalendar
-   object.
-
-   Property names, parameter names, and enumerated parameter values are
-   case-insensitive.  For example, the property name "DUE" is the same
-   as "due" and "Due", DTSTART;TZID=America/New_York:19980714T120000 is
-   the same as DtStart;TzID=America/New_York:19980714T120000.
-```
-*/
+ * Property
+ *
+ * {@link https://tools.ietf.org/rfcmarkup/5545#section-3.5 RFC 5545 &sect;3.5}
+ * ```RFC
+ *    A property is the definition of an individual attribute describing a
+ *    calendar object or a calendar component.  A property takes the form
+ *    defined by the "contentline" notation defined in Section 3.1.
+ *
+ *    The following is an example of a property:
+ *
+ *        DTSTART:19960415T133000Z
+ *
+ *    This memo imposes no ordering of properties within an iCalendar
+ *    object.
+ *
+ *    Property names, parameter names, and enumerated parameter values are
+ *    case-insensitive.  For example, the property name "DUE" is the same
+ *    as "due" and "Due", DTSTART;TZID=America/New_York:19980714T120000 is
+ *    the same as DtStart;TzID=America/New_York:19980714T120000.
+ * ```
+ */
 class Property implements Parseable, ContentLine /* TODO , Saveable */ {
 
 	const REQUIRED_SINGLETON = 'req_once';
@@ -37,7 +37,11 @@ class Property implements Parseable, ContentLine /* TODO , Saveable */ {
 	const OPTIONAL_SINGLETON = 'opt_once';
 	const OPTIONAL_MULTIPLE = 'opt';
 
-	/** @var string[] */
+	/**
+	 * An array of fully-qualified class names of valid Parameter types
+	 *    (presumptively all extending `Parameter`)
+	 * @var string[]
+	 */
 	protected static $validParameterTypes = [];
 
 	/** @var string[] */
@@ -46,7 +50,10 @@ class Property implements Parseable, ContentLine /* TODO , Saveable */ {
 	/** @var Value[] */
 	protected static $validValues = [];
 
-	/** @var string */
+	/**
+	 * The name of this property as represented in an iCalendar
+	 * @var string
+	 */
 	protected $name;
 
 	/** @var Parameter[] */
