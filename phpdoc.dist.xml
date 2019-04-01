@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <phpdoc>
-	<title>Calendar</title>
-	<parser>
-		<target>phpdoc</target>
-	</parser>
-	<transformer>
-		<target>doc</target>
-	</transformer>
-	<transformation>
-		<template name="responsive"/>
-	</transformation>
-	<files>
-		<directory>src</directory>
-	</files>
+    <title>RFC 5545 iCalendar</title>
+    <parser>
+        <target>phpdoc</target>
+    </parser>
+    <transformer>
+        <target>doc</target>
+    </transformer>
+    <transformation>
+        <template name="responsive"/>
+    </transformation>
+    <files>
+        <directory>src</directory>
+    </files>
 </phpdoc>

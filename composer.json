@@ -1,23 +1,22 @@
 {
-    "name": "battis/icalendar-parser",
-    "description": "Parse iCalendar (ICS) files and web feeds (https://, webcal://)",
-    "require": {
-        "php" : "^5.3 || ^7.0"
-    },
-    "require-dev": {
-        "phpunit/phpunit": "~5.0"
-    },
-    "license": "LGPL-3.0",
+    "name": "rfc5545/icalendar",
+    "description": "An implementation of RFC 5545 to parse and generate iCalendar files",
+    "license": "GPL-3.0",
     "authors": [
         {
             "name": "Seth Battis",
             "email": "seth@battis.net"
         }
     ],
-    "minimum-stability": "dev",
     "autoload": {
-	    "psr-4": {
-		    "Battis\\Calendar\\": "src/"
-	    }
+        "psr-4": {
+            "Battis\\Calendar\\": "src/"
+        }
+    },
+    "require-dev": {
+        "kigkonsult/icalcreator": "2.24"
+    },
+    "require": {
+        "ext-mbstring": "*"
     }
 }
