@@ -4,4 +4,5 @@
 /phpunit.xml export-ignore
 /doc/ export-ignore
 /examples/ export-ignore
-/tests/ export-ignoreS
+/tests/ export-ignore
+/standards/ export-ignore

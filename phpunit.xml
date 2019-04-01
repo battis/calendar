@@ -1,6 +1,6 @@
 <phpunit bootstrap="vendor/autoload.php">
     <testsuites>
-        <testsuite name="iCalendar">
+        <testsuite name="Calendar">
             <directory>tests</directory>
         </testsuite>
     </testsuites>

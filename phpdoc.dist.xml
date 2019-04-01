@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <phpdoc>
-    <title>RFC 5545 iCalendar</title>
+    <title>Calendar</title>
     <parser>
         <target>phpdoc</target>
     </parser>

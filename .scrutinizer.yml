@@ -1,13 +1,10 @@
 filter:
-    excluded_paths: [doc/*, examples/*, tests/*]
+    excluded_paths: [doc/*, examples/*, tests/*, standards/*]
 
 checks:
     php: true
 
 build:
-    dependencies:
-        before:
-            - mysql -uroot -e 'CREATE DATABASE phpunit_icsmunger'
     nodes:
         analysis:
             tests:
