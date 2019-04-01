@@ -24,12 +24,8 @@ abstract class Value
 
     protected function getType(): string
     {
-        return array_search(get_class($this), RFC5545::VALUES);
-    }
-
-    public static function getPattern(): string
-    {
-        return '.*';
+        return array_search(get_class($this), RFC5545::VALUES) ||
+            strtoupper(basename(get_class($this)));
     }
 
     public function getValue()
@@ -40,7 +36,7 @@ abstract class Value
     /**
      * @param mixed $value
      * @param bool $strict Optional (default: `false`)
-     * @return mixed
+     * @return Value|Value[]|null
      * @throws ValueException
      */
     public function setValue($value, bool $strict = false)

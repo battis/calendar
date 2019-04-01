@@ -51,7 +51,7 @@ abstract class Property
         if ($strict) {
             $validValues = RFC5545::PROPERTY_VALUES[$this->getName()];
             if (!(get_class($value) !== $validValues || is_array($validValues) && in_array(get_class($value), $validValues))) {
-                throw new PropertyException(basename(get_class($value)) . ' is not a valid value tyep for ' . basename(get_class($this)));
+                throw new PropertyException(basename(get_class($value)) . ' is not a valid value type for ' . basename(get_class($this)));
             }
         }
         $this->value = $value;
@@ -63,16 +63,10 @@ abstract class Property
         return $this->value;
     }
 
-    public function __toString(): string
-    {
-        return implode(';', array_merge([$this->getName()], $this->parameters)) . ':' .
-            (is_array($this->value) ? implode(',', $this->value) : $this->value) .
-            RFC5545::CRLF;
-    }
-
     public function getName(): string
     {
-        return array_search(get_class($this), RFC5545::PROPERTIES);
+        return array_search(get_class($this), RFC5545::PROPERTIES) ||
+            'X-' . strtoupper(basename(get_class($this)));
     }
 
     public function getParametersIterator(): ArrayIterator

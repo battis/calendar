@@ -28,7 +28,8 @@ abstract class Component
 
     public function getType(): string
     {
-        return array_search(get_class($this), RFC5545::COMPONENTS);
+        return array_search(get_class($this), RFC5545::COMPONENTS) ||
+            strtoupper(basename(get_class($this)));
     }
 
     public function getPropertiesIterator(): ArrayIterator
@@ -36,8 +37,9 @@ abstract class Component
         return new ArrayIterator($this->properties);
     }
 
-    public function setProperty(Property $property): Property
+    public function setProperty(Property $property): ?Property
     {
+        // FIXME can have multiple of same-name properties
         $previousValue = null;
         if (isset($this->properties[$property->getName()])) {
             $previousValue = $this->properties[$property->getName()];

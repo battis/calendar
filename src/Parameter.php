@@ -19,7 +19,8 @@ abstract class Parameter
 
     public function getName(): string
     {
-        return array_search(get_class($this), RFC5545::PROPERTY_PARAMETERS);
+        return array_search(get_class($this), RFC5545::PROPERTY_PARAMETERS) ||
+            'X-' . strtoupper(basename(get_class($this)));
     }
 
     public function getValue()
