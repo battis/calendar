@@ -1,7 +1,6 @@
 <?php
 
-use Battis\Calendar\Workflows\Exporter\iCalendarExporter;
-use Battis\Calendar\Workflows\Parser\iCalendarParser;
+use Battis\Calendar\Workflows\iCalendar;
 use kigkonsult\iCalcreator\vcalendar;
 
 require_once __DIR__ . '/../vendor/autoload.php';
@@ -79,14 +78,14 @@ for ($i = 0; $i < $argv[1]; $i++) {
     $c = benchmark(
         'battis parse',
         function () {
-            return iCalendarParser::parse(file_get_contents(INPUT_FILE));
+            return iCalendar::parseFile(INPUT_FILE);
         }
     );
 
     benchmark(
         'battis export',
         function ($caption, $c) {
-            file_put_contents(OUTPUT_DIR . "/$caption.ics", iCalendarExporter::export($c));
+            iCalendar::exportToFile($c, OUTPUT_DIR . "/$caption.ics");
         },
         $c
     );

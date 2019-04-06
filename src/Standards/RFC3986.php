@@ -57,5 +57,5 @@ interface RFC3986
         hier_part = '(?:\\/\\/' . self::authority . self::path_abempty . '|' . self::path_absolute . '|' . self::path_rootless . '|' . self::path_empty . ')',
         query = '(?:(?:' . self::pchar . '|\\/|\\?)*)',
         fragment = '(?:(?:' . self::pchar . '|\\/|\\?)*)',
-        URI = '(?:' . self::scheme . ':' . self::hier_part . '(?:\\?' . self::query . ')?(?:' . self::fragment . ')?)';
+        URI = '(?:' . self::scheme . ':' . self::hier_part . '(?:\\?' . self::query . ')?(?:#' . self::fragment . ')?)';
 }

@@ -8,5 +8,4 @@ use Battis\Calendar\Value;
 
 class Time extends Value
 {
-
 }

@@ -17,7 +17,7 @@ class IANAParameter extends Parameter
         $this->name = $name;
     }
 
-    protected function getName(): string
+    public function getName(): string
     {
         return strtoupper($this->name);
     }

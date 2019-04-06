@@ -8,8 +8,11 @@ use Battis\Calendar\Value;
 
 class FloatValue extends Value
 {
-    public function __construct($value)
+    public function setValue($value, bool $strict = false, $rawValue = null)
     {
-        parent::__construct((float)$value);
+        if ($rawValue === null) {
+            $rawValue = $value;
+        }
+        return parent::setValue((float)$value, $strict, $rawValue);
     }
 }

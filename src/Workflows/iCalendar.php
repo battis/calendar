@@ -1,9 +1,10 @@
 <?php
 
 
-namespace Battis\Calendar\Workflows\Parser;
+namespace Battis\Calendar\Workflows;
 
 
+use Battis\Calendar\Calendar;
 use Battis\Calendar\Component;
 use Battis\Calendar\Components\Undefined;
 use Battis\Calendar\Exceptions\ValueException;
@@ -16,27 +17,50 @@ use Battis\Calendar\Property;
 use Battis\Calendar\Standards\RFC5545;
 use Battis\Calendar\Value;
 use Battis\Calendar\Values\Text;
-use Battis\Calendar\Workflows\Parser;
+use Battis\Calendar\Values\ValueList;
 
-class iCalendarParser implements Parser
+class iCalendar implements Parser, Exporter
 {
+    /************************************************************************
+     * Parser
+     ************************************************************************/
+
+    const
+        REGEX_START = '/^',
+        REGEX_END = '$/i';
+
     private function __construct()
     {
     }
 
     /**
-     * @param string $text
+     * @param string $path
+     * @param null $type
+     * @param mixed ...$constructorParameters
      * @return Component
      * @throws ValueException
      */
-    public static function parse(string $text): Component
+    public static function parseFile(string $path, $type = null, ...$constructorParameters): Component
+    {
+        return self::parse(file_get_contents($path), $type, ...$constructorParameters);
+    }
+
+    /**
+     * @param string $text
+     * @param string|Calendar $type (Optional, default `null`)
+     * @param mixed $constructorParameters
+     * @return Component
+     * @throws ValueException
+     */
+    public static function parse(string $text, $type = null, ...$constructorParameters): Component
     {
         $unparsed = explode(RFC5545::CRLF, self::unfold($text));
         while (($line = array_shift($unparsed)) !== null) {
-            foreach (RFC5545::COMPONENTS as $name => $type) {
-                if (strtoupper($line) === "BEGIN:$name") {
-                    return self::parseComponent($unparsed, $name);
+            if (preg_match(self::REGEX_START . RFC5545::COMPONENT_BEGIN . '(' . RFC5545::iana_token . ')' . self::REGEX_END, $line, $match)) {
+                if ($type === null && isset(RFC5545::COMPONENTS[$match[1]])) {
+                    $type = RFC5545::COMPONENTS[$match[1]];
                 }
+                return self::parseComponent($unparsed, $match[1], $type, ...$constructorParameters);
             }
         }
         return null;
@@ -54,30 +78,44 @@ class iCalendarParser implements Parser
     /**
      * @param string[] $unparsed
      * @param string|null $name
+     * @param string|Component $type (Optional, default `null`)
+     * @param mixed $constructorParameters
      * @return Component
      * @throws ValueException
      */
-    private static function parseComponent(array &$unparsed, string $name = null)
+    private static function parseComponent(array &$unparsed, string $name = null, $type = null, ...$constructorParameters)
     {
         $properties = [];
         $subcomponents = [];
         $end = false;
         while (!($end || empty($unparsed))) {
             $line = array_shift($unparsed);
-            if (preg_match("/^END:$name$/i", $line)) {
+            if (preg_match(self::REGEX_START . RFC5545::COMPONENT_END . $name . self::REGEX_END, $line)) {
                 $end = true;
-            } elseif (preg_match('/^BEGIN:([A-Z0-9\\-]+)$/', $line, $match)) {
+            } elseif (preg_match(self::REGEX_START . RFC5545::COMPONENT_BEGIN . '(' . RFC5545::iana_token . ')' . self::REGEX_END, $line, $match)) {
                 array_push($subcomponents, self::parseComponent($unparsed, $match[1]));
             } elseif (!empty($line)) {
                 array_push($properties, self::parseProperty($line));
             }
         }
-        return self::instantiateComponent($name, $properties, $subcomponents);
+        return self::instantiateComponent($name, $properties, $subcomponents, $type, ...$constructorParameters);
     }
 
-    private static function instantiateComponent(string $name, array $properties = [], array $subcomponents = []): Component
+    /**
+     * @param string $name
+     * @param array $properties
+     * @param array $subcomponents
+     * @param string|Component $type (Optional, default `null`)
+     * @return Component
+     */
+    private static function instantiateComponent(string $name, array $properties = [], array $subcomponents = [], $type = null, ...$constructorParameters): Component
     {
-        if (isset(RFC5545::COMPONENTS[$name])) {
+        if ($type !== null) {
+            if (!is_string($type)) {
+                $type = get_class($type);
+            }
+            return new $type($properties, $subcomponents, ...$constructorParameters);
+        } else if (isset(RFC5545::COMPONENTS[$name])) {
             /** @var Component $componentType */
             $componentType = RFC5545::COMPONENTS[$name];
             return new $componentType($properties, $subcomponents);
@@ -93,11 +131,7 @@ class iCalendarParser implements Parser
      */
     private static function parseProperty(string $unparsed)
     {
-        preg_match('/^([A-Z0-9\\-]+)([;:].+)$/i', $unparsed, $match);
-        if (empty($match)) {
-            var_dump($unparsed);
-            return null;
-        }
+        preg_match(self::REGEX_START . '(' . RFC5545::name . ')([' . RFC5545::PARAMETER_SEPARATOR . RFC5545::VALUE_SEPARATOR . '].+)' . self::REGEX_END, $unparsed, $match);
         $name = $match[1];
         $parameters = [];
         $unparsed = $match[2];
@@ -105,7 +139,7 @@ class iCalendarParser implements Parser
         $quoted = false;
         while (!empty($unparsed)) {
             switch ($unparsed[$cursor]) {
-                case ';':
+                case RFC5545::PARAMETER_SEPARATOR:
                     if (!$quoted) {
                         if ($cursor === 0) {
                             $unparsed = substr($unparsed, 1);
@@ -117,7 +151,7 @@ class iCalendarParser implements Parser
                         $cursor = -1;
                     }
                     break;
-                case ':':
+                case RFC5545::VALUE_SEPARATOR:
                     if (!$quoted) {
                         if ($cursor > 0) {
                             array_push($parameters, self::parseParameter(substr($unparsed, 0, $cursor)));
@@ -126,10 +160,10 @@ class iCalendarParser implements Parser
                         $unparsed = null;
                     }
                     break;
-                case '\\':
+                case RFC5545::ESCAPE_CHAR:
                     $cursor++; // skip escaped character;
                     break;
-                case '"':
+                case RFC5545::DQUOTE:
                     $quoted = !$quoted;
                     break;
             }
@@ -182,7 +216,7 @@ class iCalendarParser implements Parser
      */
     private static function parseParameter(string $unparsed)
     {
-        preg_match('/^([A-Z0-9\\-]+)=(.*)$/i', $unparsed, $match);
+        preg_match(self::REGEX_START . '(' . RFC5545::param_name . ')' . RFC5545::PARAMETER_KEYVALUE_SEPARATOR . '(.*)' . self::REGEX_END, $unparsed, $match);
         $name = $match[1];
         $value = null;
         $unparsed = $match[2];
@@ -190,13 +224,13 @@ class iCalendarParser implements Parser
         $quoted = false;
         while ($cursor < strlen($unparsed)) {
             switch ($unparsed[$cursor]) {
-                case '"':
+                case RFC5545::DQUOTE:
                     $quoted = !$quoted;
                     break;
-                case '\\':
+                case RFC5545::ESCAPE_CHAR:
                     $cursor++; // skip escaped character
                     break;
-                case ',':
+                case RFC5545::LIST_SEPARATOR:
                     if (!$quoted) {
                         if ($value === null) {
                             $value = [];
@@ -242,13 +276,13 @@ class iCalendarParser implements Parser
         $structured = false;
         while ($cursor < strlen($unparsed)) {
             switch ($unparsed[$cursor]) {
-                case '"':
+                case RFC5545::DQUOTE:
                     $quoted = !$quoted;
                     break;
-                case '\\':
+                case RFC5545::ESCAPE_CHAR:
                     $cursor++; // skip escaped character
                     break;
-                case ',':
+                case RFC5545::LIST_SEPARATOR:
                     if (!$quoted) {
                         if ($value === null) {
                             $value = [];
@@ -258,7 +292,7 @@ class iCalendarParser implements Parser
                         $cursor = -1;
                     }
                     break;
-                case '=':
+                case RFC5545::PARAMETER_KEYVALUE_SEPARATOR:
                     if (!$quoted && $expectedType !== Text::class) {
                         $structured = true;
                         $field = substr($unparsed, 0, $cursor);
@@ -266,7 +300,7 @@ class iCalendarParser implements Parser
                         $cursor = -1;
                     }
                     break;
-                case ';':
+                case RFC5545::FIELD_SEPARATOR:
                     if (!$quoted && $expectedType !== Text::class) {
                         $value[$field] = substr($unparsed, 0, $cursor);
                         unset($field);
@@ -281,9 +315,10 @@ class iCalendarParser implements Parser
             if (is_array($value)) {
                 if ($structured) {
                     $value[$field] = $unparsed;
-                    return self::instantiateValue($expectedType, $value);
+                    return self::instantiateValue($expectedType, $value, $structured);
                 } else {
                     array_push($value, self::parseValue($expectedType, $unparsed));
+                    return self::instantiateValue($expectedType, $value);
                 }
             } else {
                 return self::instantiateValue($expectedType, $unparsed);
@@ -294,15 +329,21 @@ class iCalendarParser implements Parser
 
     /**
      * @param $expectedType
-     * @param $value
-     * @return Text
+     * @param array|string $value
+     * @param bool $structured (Optional, default `false`)
+     * @return Value
      * @throws ValueException
      */
-    private static function instantiateValue($expectedType, $value)
+    private static function instantiateValue($expectedType, $value, bool $structured = false)
     {
+        if (is_array($value) && !$structured) {
+            return new ValueList($value);
+        }
+
+        // only one structured type (RecurrenceRule), and it's not included a list of possible types
         if (is_array($expectedType)) {
             foreach ($expectedType as $type) {
-                if (preg_match('/^' . RFC5545::PROPERTY_VALUE_DATA_TYPES[$type] . '$/', $value)) {
+                if (preg_match(self::REGEX_START . RFC5545::PROPERTY_VALUE_DATA_TYPES[$type] . self::REGEX_END, $value)) {
                     return new $type($value);
                 }
             }
@@ -310,4 +351,76 @@ class iCalendarParser implements Parser
         }
         return new $expectedType($value);
     }
+
+    /************************************************************************
+     * Exporter
+     ************************************************************************/
+
+    public static function exportToFile(Component $component, string $path)
+    {
+        file_put_contents($path, self::export($component));
+    }
+
+    public static function export(Component $component): string
+    {
+        return self::fold(self::exportComponent($component));
+    }
+
+    private static function fold(string $text): string
+    {
+        $lines = explode(RFC5545::CRLF, $text);
+        $folded = [];
+        foreach ($lines as $line) {
+            while (mb_strlen($line) > RFC5545::CONTENTLINE_WIDTH) {
+                array_push($folded, mb_strcut($line, 0, RFC5545::CONTENTLINE_WIDTH));
+                $line = ' ' . mb_strcut($line, RFC5545::CONTENTLINE_WIDTH);
+            }
+            array_push($folded, $line);
+        }
+        return implode(RFC5545::CRLF, $folded);
+    }
+
+    private static function exportComponent(Component $component): string
+    {
+        $text = 'BEGIN:' . $component->getType() . RFC5545::CRLF;
+        foreach ($component->getAllProperties() as $property) {
+            $text .= self::exportProperty($property);
+        }
+        foreach ($component->getAllComponents() as $subcomponent) {
+            $text .= self::exportComponent($subcomponent);
+        }
+        $text .= 'END:' . $component->getType() . RFC5545::CRLF;
+        return $text;
+    }
+
+    private static function exportProperty(Property $property): string
+    {
+        $text = $property->getName();
+        foreach ($property->getAllParameters() as $parameter) {
+            $text .= RFC5545::PARAMETER_SEPARATOR . self::exportParameter($parameter);
+        }
+        $text .= RFC5545::VALUE_SEPARATOR . self::exportValue($property->getValue()) . RFC5545::CRLF;
+        return $text;
+    }
+
+    private static function exportParameter(Parameter $parameter): string
+    {
+        $text = $parameter->getName() . RFC5545::PARAMETER_KEYVALUE_SEPARATOR;
+        if (is_array($parameter->getValue())) {
+            $values = [];
+            foreach ($parameter->getValueIterator() as $value) {
+                array_push($values, self::exportValue($value));
+            }
+            $text .= implode(RFC5545::LIST_SEPARATOR, $values);
+        } else {
+            $text .= self::exportValue($parameter->getValue());
+        }
+        return $text;
+    }
+
+    private static function exportValue($value): string
+    {
+        return (string)$value;
+    }
+
 }

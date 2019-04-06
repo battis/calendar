@@ -104,7 +104,7 @@ interface RFC5545
         CRLF = "\r\n",
         DQUOTE = '"';
 
-    /** @link https://tools.ietf.org/html/rfc5545#section-2.1 &sect;3.1. Content Lines */
+    /** @link https://tools.ietf.org/html/rfc5545#section-3.1 &sect;3.1. Content Lines */
     const
         CONTROL = '[\\x00-\\x08\\x0A-\\x1F\\x7F]',
         NON_US_ASCII = '(?:' . RFC3629::UTF8_2 . '|' . RFC3629::UTF8_3 . '|' . RFC3629::UTF8_4 . ')',
@@ -114,14 +114,22 @@ interface RFC5545
         quoted_string = self::DQUOTE . self::QSAFE_CHAR . '*' . self::DQUOTE,
         value = self::VALUE_CHAR . '*',
         vendorid = '(?:' . ABNF::ALPHA . '|\\d){3,}',
-        iana_token = '(?:' . ABNF::ALPHA . '|\\d|-' . ')',
+        iana_token = '(?:' . ABNF::ALPHA . '|\\d|-' . ')+',
         x_name = 'X-' . self::vendorid . '?(?:' . ABNF::ALPHA . '|\\d|-)+',
         paramtext = self::SAFE_CHAR . '*',
         param_value = '(?:' . self::paramtext . '|' . self::quoted_string . ')',
         param_name = '(?:' . self::iana_token . '|' . self::x_name . ')',
-        param = self::param_name . '=' . self::param_value . '(?:,' . self::param_value . ')*',
+        PARAMETER_KEYVALUE_SEPARATOR = '=',
+        param = self::param_name . self::PARAMETER_KEYVALUE_SEPARATOR . self::param_value . '(?:,' . self::param_value . ')*',
         name = '(?:' . self::iana_token . '|' . self::x_name . ')',
-        contentline = self::name . '(?:;' . self::param . '):' . self::value . self::CRLF;
+        PARAMETER_SEPARATOR = ';',
+        VALUE_SEPARATOR = ':',
+        contentline = self::name . '(?:' . self::PARAMETER_SEPARATOR . self::param . ')' . self::VALUE_SEPARATOR . self::value . self::CRLF;
+
+    /** @link https://tools.ietf.org/html/rfc5545#section-3.1.1 &sect;3.1.1. List and Field Separators */
+    const
+        LIST_SEPARATOR = ',',
+        FIELD_SEPARATOR = ';';
 
     /** @link https://tools.ietf.org/html/rfc5545#section-3.2 &sect;3.2. Property Parameters */
     const
@@ -202,6 +210,8 @@ interface RFC5545
         StandardTime = 'STANDARD',
         DaylightSavingTime = 'DAYLIGHT',
         Alarm = 'VALARM',
+        COMPONENT_BEGIN = 'BEGIN:',
+        COMPONENT_END = 'END:',
         COMPONENTS = [
         self::Calendar => Calendar::class,
         self::Event => Event::class,
@@ -495,30 +505,52 @@ interface RFC5545
         seconds = '(?:\\d{1,2})',
         byseclist = '(?:' . self::seconds . '(?:,' . self::seconds . ')*)',
         enddate = '(?:' . self::date . '|' . self::date_time . ')',
-        freq = '(?:SECONDLY|MINUTELY|HOURLY|DAILY|WEEKLY|MONTHLY|YEARLY)',
+        SECONDLY = 'SECONDLY',
+        MINUTELY = 'MINUTELY',
+        HOURLY = 'HOURLY',
+        DAILY = 'DAILY',
+        WEEKLY = 'WEEKLY',
+        MONTHLY = 'MONTHLY',
+        YEARLY = 'YEARLY',
+        freq = '(?:' . self::SECONDLY . '|' . self::MINUTELY . '|' . self::HOURLY . '|' . self::DAILY . '|' . self::WEEKLY . '|' . self::MONTHLY . '|' . self::YEARLY . ')',
+        FREQ = 'FREQ',
+        UNTIL = 'UNTIL',
+        COUNT = 'COUNT',
+        INTERVAL = 'INTERVAL',
+        BYSECOND = 'BYSECOND',
+        BYMINUTE = 'BYMINUTE',
+        BYHOUR = 'BYHOUR',
+        BYDAY = 'BYDAY',
+        BYMONTHDAY = 'BYMONTHDAY',
+        BYYEARDAY = 'BYYEARDAY',
+        BYWEEKNO = 'BYWEEKNO',
+        BYMONTH = 'BYMONTH',
+        BYSETPOS = 'BYSETPOS',
+        WKST = 'WKST',
         recur_rule_part =
         '(?:' .
-        'FREQ=' . self::freq . '|' .
-        'UNTIL=' . self::enddate . '|' .
-        'COUNT=\\d+|' .
-        'INTERVA:=\\d+|' .
-        'BYSECOND=' . self::byseclist . '|' .
-        'BYMINUTE=' . self::byminlist . '|' .
-        'BYHOUR=' . self::byhrlist . '|' .
-        'BYDAY=' . self::bywdaylist . '|' .
-        'BYMONTHDAY=' . self::bymodaylist . '|' .
-        'BYYEARDAY=' . self::byyrdaylist . '|' .
-        'BYWEEKNO=' . self::bywknolist . '|' .
-        'BYMONTH=' . self::bymolist . '|' .
-        'BYSETPOS=' . self::bysplist . '|' .
-        'WKST=' . self::weekday .
+        self::FREQ . self::FIELD_SEPARATOR . self::freq . '|' .
+        self::UNTIL . self::FIELD_SEPARATOR . self::enddate . '|' .
+        self::COUNT . self::FIELD_SEPARATOR . '\\d+|' .
+        self::INTERVAL . self::FIELD_SEPARATOR . '\\d+|' .
+        self::BYSECOND . self::FIELD_SEPARATOR . self::byseclist . '|' .
+        self::BYMINUTE . self::FIELD_SEPARATOR . self::byminlist . '|' .
+        self::BYHOUR . self::FIELD_SEPARATOR . self::byhrlist . '|' .
+        self::BYDAY . self::FIELD_SEPARATOR . self::bywdaylist . '|' .
+        self::BYMONTHDAY . self::FIELD_SEPARATOR . self::bymodaylist . '|' .
+        self::BYYEARDAY . self::FIELD_SEPARATOR . self::byyrdaylist . '|' .
+        self::BYWEEKNO . self::FIELD_SEPARATOR . self::bywknolist . '|' .
+        self::BYMONTH . self::FIELD_SEPARATOR . self::bymolist . '|' .
+        self::BYSETPOS . self::FIELD_SEPARATOR . self::bysplist . '|' .
+        self::WKST . self::FIELD_SEPARATOR . self::weekday .
         ')',
         recur = '(?:' . self::recur_rule_part . '(?:;' . self::recur_rule_part . ')*)';
 
-    /** @link https://tools.ietf.org/html/rfc5545#section-3.3.11 &sect;3.3.13. Text */
+    /** @link https://tools.ietf.org/html/rfc5545#section-3.3.13 &sect;3.3.13. Text */
     const
         TSAFE_CHAR = '(?:' . self::WSP . '|[\\x21\\x23-\\x2B\\x2D-\\x39\\x3C-\\x5B\\x5D-\\x7E]|' . self::NON_US_ASCII . ')',
-        ESCAPED_CHAR = '(?:\\\\|\\;|\\,|\\[Nn])',
+        ESCAPE_CHAR = '\\',
+        ESCAPED_CHAR = '(?:' . self::ESCAPE_CHAR . self::ESCAPE_CHAR . '|' . self::ESCAPE_CHAR . ';|' . self::ESCAPE_CHAR . ',|' . self::ESCAPE_CHAR . '[Nn])',
         text = '(?:(?:' . self::TSAFE_CHAR . '|[:"]|' . self::ESCAPED_CHAR . ')*)';
 
     /** @link https://tools.ietf.org/html/rfc5545#section-3.3.14 &sect;3.3.14. UTC Offset */

@@ -10,6 +10,7 @@ use Battis\Calendar\Standards\RFC5545;
 abstract class Value
 {
     private $value;
+    private $rawValue;
 
     /**
      * Value constructor.
@@ -24,10 +25,16 @@ abstract class Value
 
     protected function getType(): string
     {
-        return array_search(get_class($this), RFC5545::VALUES) ||
-            strtoupper(basename(get_class($this)));
+        if ($type = array_search(get_class($this), RFC5545::VALUES)) {
+            return $type;
+        } else {
+            return strtoupper(basename(get_class($this)));
+        }
     }
 
+    /**
+     * @return mixed
+     */
     public function getValue()
     {
         return $this->value;
@@ -35,17 +42,56 @@ abstract class Value
 
     /**
      * @param mixed $value
-     * @param bool $strict Optional (default: `false`)
-     * @return Value|Value[]|null
      * @throws ValueException
      */
-    public function setValue($value, bool $strict = false)
+    protected function validate($value): void
     {
-        if ($strict && preg_match('/^' . RFC5545::PROPERTY_VALUE_DATA_TYPES[get_class($this)] . '$/i', $value) !== 1) {
+        if (preg_match('/^' . RFC5545::PROPERTY_VALUE_DATA_TYPES[get_class($this)] . '$/i', $value) !== 1) {
             throw new ValueException("`$value` does not match expected data type for " . basename(get_class($this)));
         }
+    }
+
+    /**
+     * @param mixed $value
+     * @param bool $strict Optional (default: `false`)
+     * @param mixed $rawValue (Optional, default `null`)
+     * @return mixed
+     * @throws ValueException
+     */
+    public function setValue($value, bool $strict = false, $rawValue = null)
+    {
         $previousValue = $this->value;
+        if ($strict) {
+            if ($rawValue !== null) {
+                $this->validate($rawValue);
+            } else {
+                $this->validate($value);
+            }
+        }
         $this->value = $value;
+        $this->rawValue = $rawValue;
         return $previousValue;
+    }
+
+    public function getRawValue()
+    {
+        return $this->rawValue;
+    }
+
+    public function __toString()
+    {
+        if (is_array($this->value)) {
+            return implode(
+                RFC5545::FIELD_SEPARATOR,
+                array_map(
+                    function ($field, $value) {
+                        return $field . RFC5545::PARAMETER_KEYVALUE_SEPARATOR . $value;
+                    },
+                    array_keys($this->value),
+                    array_values($this->value)
+                )
+            );
+        }
+        return (string)$this->value;
     }
 }

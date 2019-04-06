@@ -24,7 +24,7 @@ class Undefined extends Component
         $this->type = $type;
     }
 
-    protected function getType(): string
+    public function getType(): string
     {
         return strtoupper($this->type);
     }

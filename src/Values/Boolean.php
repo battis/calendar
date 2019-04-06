@@ -4,23 +4,28 @@
 namespace Battis\Calendar\Values;
 
 
+use Battis\Calendar\Exceptions\ValueException;
 use Battis\Calendar\Value;
 
 class Boolean extends Value
 {
-    public function __construct($value)
+    protected function validate($value): void
     {
-        if (is_bool($value)) {
-            parent::__construct($value);
-        } elseif (strtoupper($value) == 'TRUE') {
-            parent::__construct(true);
-        } else {
-            parent::__construct(false);
+        if (!is_bool($value) || (strtoupper($value) != 'TRUE' && strtoupper($value) != 'FALSE')) {
+            throw new ValueException('Must be a boolean value');
         }
+    }
+
+    public function setValue($value, bool $strict = false, $rawValue = null)
+    {
+        if ($rawValue === null) {
+            $rawValue = $value;
+        }
+        return parent::setValue((bool)$value, $strict, $rawValue);
     }
 
     public function __toString()
     {
-        return ($this->value ? 'TRUE' : 'FALSE');
+        return ($this->getValue() ? 'TRUE' : 'FALSE');
     }
 }

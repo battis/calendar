@@ -7,6 +7,7 @@ namespace Battis\Calendar\Properties\Component\Miscellaneous;
 use Battis\Calendar\Parameter;
 use Battis\Calendar\Property;
 use Battis\Calendar\Value;
+use Battis\Calendar\Values\Text;
 
 class IANAProperty extends Property
 {
@@ -28,5 +29,14 @@ class IANAProperty extends Property
     public function getName(): string
     {
         return strtoupper($this->name);
+    }
+
+    protected function autoboxPrimitives($value, bool $strict): Value
+    {
+        if ($value instanceof Value) {
+            return $value;
+        } else {
+            return new Text($value, $strict);
+        }
     }
 }

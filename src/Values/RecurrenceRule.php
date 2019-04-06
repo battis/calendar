@@ -8,5 +8,4 @@ use Battis\Calendar\Value;
 
 class RecurrenceRule extends Value
 {
-
 }
