@@ -4,15 +4,14 @@
 namespace Battis\Calendar;
 
 
-use ArrayIterator;
 use Battis\Calendar\Standards\RFC5545;
 
 abstract class Parameter
 {
-    /** @var Value|Value[] */
+    /** @var string */
     private $value;
 
-    public function __construct(string $value = null)
+    public function __construct(?string $value = null)
     {
         $this->value = $value;
     }
@@ -29,13 +28,5 @@ abstract class Parameter
     public function getValue()
     {
         return $this->value;
-    }
-
-    public function getValueIterator(): ArrayIterator
-    {
-        if (is_array($this->value)) {
-            return new ArrayIterator($this->value);
-        }
-        return null;
     }
 }

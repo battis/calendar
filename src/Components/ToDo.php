@@ -4,8 +4,6 @@
 namespace Battis\Calendar\Components;
 
 
-use Battis\Calendar\Component;
-
-class ToDo extends Component
+class ToDo extends RecurringComponent
 {
 }

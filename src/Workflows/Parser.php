@@ -8,5 +8,5 @@ use Battis\Calendar\Component;
 
 interface Parser
 {
-    public static function parse(string $text): Component;
+    public static function parse(string $text): ?Component;
 }

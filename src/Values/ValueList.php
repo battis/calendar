@@ -15,6 +15,9 @@ class ValueList extends Value
         if (is_array($values)) {
             $type = null;
             foreach ($values as $value) {
+                if (!($value instanceof Value)) {
+                    throw new ValueException('All elements must be valid values');
+                }
                 if ($type === null) {
                     $type = get_class($value);
                 } elseif (!(get_class($value) instanceof $type)) {

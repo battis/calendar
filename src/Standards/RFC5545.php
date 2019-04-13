@@ -111,20 +111,20 @@ interface RFC5545
         VALUE_CHAR = '(?:' . self::WSP . '|[\\x21-\\x7E]|' . self::NON_US_ASCII . ')',
         SAFE_CHAR = '(?:' . self::WSP . '|[\\x21\\x23-\\x2B\\x2D-\\x39\\x3C-\\x7E]|' . self::NON_US_ASCII . ')',
         QSAFE_CHAR = '(?:' . self::WSP . '|[\\x21\\x23-\\x7E]|' . self::NON_US_ASCII . ')',
-        quoted_string = self::DQUOTE . self::QSAFE_CHAR . '*' . self::DQUOTE,
-        value = self::VALUE_CHAR . '*',
-        vendorid = '(?:' . ABNF::ALPHA . '|\\d){3,}',
-        iana_token = '(?:' . ABNF::ALPHA . '|\\d|-' . ')+',
-        x_name = 'X-' . self::vendorid . '?(?:' . ABNF::ALPHA . '|\\d|-)+',
-        paramtext = self::SAFE_CHAR . '*',
-        param_value = '(?:' . self::paramtext . '|' . self::quoted_string . ')',
-        param_name = '(?:' . self::iana_token . '|' . self::x_name . ')',
+        QUOTED_STRING = self::DQUOTE . self::QSAFE_CHAR . '*' . self::DQUOTE,
+        VALUE = self::VALUE_CHAR . '*',
+        VENDORID = '(?:' . ABNF::ALPHA . '|\\d){3,}',
+        IANA_TOKEN = '(?:' . ABNF::ALPHA . '|\\d|-' . ')+',
+        X_NAME = 'X-' . self::VENDORID . '?(?:' . ABNF::ALPHA . '|\\d|-)+',
+        PARAMTEXT = self::SAFE_CHAR . '*',
+        PARAM_VALUE = '(?:' . self::PARAMTEXT . '|' . self::QUOTED_STRING . ')',
+        PARAM_NAME = '(?:' . self::IANA_TOKEN . '|' . self::X_NAME . ')',
         PARAMETER_KEYVALUE_SEPARATOR = '=',
-        param = self::param_name . self::PARAMETER_KEYVALUE_SEPARATOR . self::param_value . '(?:,' . self::param_value . ')*',
-        name = '(?:' . self::iana_token . '|' . self::x_name . ')',
+        PARAM = self::PARAM_NAME . self::PARAMETER_KEYVALUE_SEPARATOR . self::PARAM_VALUE . '(?:,' . self::PARAM_VALUE . ')*',
+        NAME = '(?:' . self::IANA_TOKEN . '|' . self::X_NAME . ')',
         PARAMETER_SEPARATOR = ';',
         VALUE_SEPARATOR = ':',
-        contentline = self::name . '(?:' . self::PARAMETER_SEPARATOR . self::param . ')' . self::VALUE_SEPARATOR . self::value . self::CRLF;
+        CONTENTLINE = self::NAME . '(?:' . self::PARAMETER_SEPARATOR . self::PARAM . ')' . self::VALUE_SEPARATOR . self::VALUE . self::CRLF;
 
     /** @link https://tools.ietf.org/html/rfc5545#section-3.1.1 &sect;3.1.1. List and Field Separators */
     const
@@ -133,378 +133,378 @@ interface RFC5545
 
     /** @link https://tools.ietf.org/html/rfc5545#section-3.2 &sect;3.2. Property Parameters */
     const
-        AlternateTextRepresentation = 'ALTREP',
-        CommonName = 'CN',
-        CalendarUserType = 'CUTYPE',
-        Delegators = 'DELEGATED-FROM',
-        Delegatees = 'DELEGATED-TO',
-        DirectoryEntryReference = 'DIR',
-        InlineEncoding = 'ENCODING',
-        FormatType = 'FMTTYPE',
-        FreeBusyTimeType = 'FBTYPE',
-        Language = 'LANGUAGE',
-        GroupOrListMembership = 'MEMBER',
-        ParticipationStatus = 'PARTSTAT',
-        RecurrenceIdentifierRange = 'RANGE',
-        AlarmTriggerRelationship = 'RELATED',
-        RelationshipType = 'RELTYPE',
-        ParticipationRole = 'ROLE',
-        RSVPExpectation = 'RSVP',
-        SentBy = 'SENT-BY',
-        // TimeZoneIdentifier already defined as property label
-        ValueDataTypes = 'VALUE',
+        ALTERNATE_TEXT_REPRESENTATION = 'ALTREP',
+        COMMON_NAME = 'CN',
+        CALENDAR_USER_TYPE = 'CUTYPE',
+        DELEGATORS = 'DELEGATED-FROM',
+        DELEGATEES = 'DELEGATED-TO',
+        DIRECTORY_ENTRY_REFERENCE = 'DIR',
+        IN_LINE_ENCODING = 'ENCODING',
+        FORMAT_TYPE = 'FMTTYPE',
+        FREE_BUSY_TIME_TYPE = 'FBTYPE',
+        LANGUAGE = 'LANGUAGE',
+        GROUP_OR_LIST_MEMBERSHIP = 'MEMBER',
+        PARTICIPATION_STATUS = 'PARTSTAT',
+        RECURRENCE_IDENTIFIER_RANGE = 'RANGE',
+        ALARM_TRIGGER_RELATIONSHIP = 'RELATED',
+        RELATIONSHIP_TYPE = 'RELTYPE',
+        PARTICIPATION_ROLE = 'ROLE',
+        RSVP_EXPECTATION = 'RSVP',
+        SENT_BY = 'SENT-BY',
+        TIME_ZONE_IDENTIFIER = 'TZID',
+        VALUE_DATA_TYPES = 'VALUE',
         PROPERTY_PARAMETERS = [
-        self::AlternateTextRepresentation => AlternateTextRepresentation::class,
-        self::CommonName => CommonName::class,
-        self::CalendarUserType => CalendarUserType::class,
-        self::Delegators => Delegators::class,
-        self::Delegatees => Delegatees::class,
-        self::DirectoryEntryReference => DirectoryEntryReference::class,
-        self::InlineEncoding => InlineEncoding::class,
-        self::FormatType => FormatType::class,
-        self::FreeBusyTimeType => FreeBusyTimeType::class,
-        self::Language => Language::class,
-        self::GroupOrListMembership => GroupOrListMembership::class,
-        self::ParticipationStatus => ParticipationStatus::class,
-        self::RecurrenceIdentifierRange => RecurrenceIdentifierRange::class,
-        self::AlarmTriggerRelationship => AlarmTriggerRelationship::class,
-        self::RelationshipType => RelationshipType::class,
-        self::ParticipationRole => ParticipationRole::class,
-        self::RSVPExpectation => RSVPExpectation::class,
-        self::SentBy => SentBy::class,
-        self::TimeZoneIdentifier => TimeZoneIdentifierParameter::class,
-        self::ValueDataTypes => ValueDataTypes::class
+        self::ALTERNATE_TEXT_REPRESENTATION => AlternateTextRepresentation::class,
+        self::COMMON_NAME => CommonName::class,
+        self::CALENDAR_USER_TYPE => CalendarUserType::class,
+        self::DELEGATORS => Delegators::class,
+        self::DELEGATEES => Delegatees::class,
+        self::DIRECTORY_ENTRY_REFERENCE => DirectoryEntryReference::class,
+        self::IN_LINE_ENCODING => InlineEncoding::class,
+        self::FORMAT_TYPE => FormatType::class,
+        self::FREE_BUSY_TIME_TYPE => FreeBusyTimeType::class,
+        self::LANGUAGE => Language::class,
+        self::GROUP_OR_LIST_MEMBERSHIP => GroupOrListMembership::class,
+        self::PARTICIPATION_STATUS => ParticipationStatus::class,
+        self::RECURRENCE_IDENTIFIER_RANGE => RecurrenceIdentifierRange::class,
+        self::ALARM_TRIGGER_RELATIONSHIP => AlarmTriggerRelationship::class,
+        self::RELATIONSHIP_TYPE => RelationshipType::class,
+        self::PARTICIPATION_ROLE => ParticipationRole::class,
+        self::RSVP_EXPECTATION => RSVPExpectation::class,
+        self::SENT_BY => SentBy::class,
+        self::TIME_ZONE_IDENTIFIER => TimeZoneIdentifierParameter::class,
+        self::VALUE_DATA_TYPES => ValueDataTypes::class
     ];
 
     /** @link https://tools.ietf.org/html/rfc5545#section-3.2 &sect;3.2. Property Parameters */
     const PROPERTY_PARAMETER_VALUES = [
-        self::AlternateTextRepresentation => URI::class,
-        self::CommonName => Text::class,
-        self::CalendarUserType => Text::class,
-        self::Delegators => CalendarUserAddress::class,
-        self::Delegatees => CalendarUserAddress::class,
-        self::DirectoryEntryReference => URI::class,
-        self::InlineEncoding => Text::class,
-        self::FormatType => Text::class,
-        self::FreeBusyTimeType => Text::class,
-        self::Language => Text::class,
-        self::GroupOrListMembership => CalendarUserAddress::class,
-        self::ParticipationStatus => Text::class,
-        self::RecurrenceIdentifierRange => Text::class,
-        self::AlarmTriggerRelationship => Text::class,
-        self::RelationshipType => Text::class,
-        self::ParticipationRole => Text::class,
-        self::RSVPExpectation => Boolean::class,
-        self::SentBy => CalendarUserAddress::class,
-        self::TimeZoneIdentifier => Text::class,
-        self::ValueDataTypes => Text::class
+        self::ALTERNATE_TEXT_REPRESENTATION => URI::class,
+        self::COMMON_NAME => Text::class,
+        self::CALENDAR_USER_TYPE => Text::class,
+        self::DELEGATORS => CalendarUserAddress::class,
+        self::DELEGATEES => CalendarUserAddress::class,
+        self::DIRECTORY_ENTRY_REFERENCE => URI::class,
+        self::IN_LINE_ENCODING => Text::class,
+        self::FORMAT_TYPE => Text::class,
+        self::FREE_BUSY_TIME_TYPE => Text::class,
+        self::LANGUAGE => Text::class,
+        self::GROUP_OR_LIST_MEMBERSHIP => CalendarUserAddress::class,
+        self::PARTICIPATION_STATUS => Text::class,
+        self::RECURRENCE_IDENTIFIER_RANGE => Text::class,
+        self::ALARM_TRIGGER_RELATIONSHIP => Text::class,
+        self::RELATIONSHIP_TYPE => Text::class,
+        self::PARTICIPATION_ROLE => Text::class,
+        self::RSVP_EXPECTATION => Boolean::class,
+        self::SENT_BY => CalendarUserAddress::class,
+        self::TIME_ZONE_IDENTIFIER => Text::class,
+        self::VALUE_DATA_TYPES => Text::class
     ];
 
     const
-        Calendar = 'VCALENDAR',
-        Event = 'VEVENT',
-        ToDo = 'VTODO',
-        Journal = 'VJOURNAL',
-        FreeBusy = 'VFREEBUSY',
-        TimeZone = 'VTIMEZONE',
-        StandardTime = 'STANDARD',
-        DaylightSavingTime = 'DAYLIGHT',
-        Alarm = 'VALARM',
+        CALENDAR = 'VCALENDAR',
+        EVENT = 'VEVENT',
+        TO_DO = 'VTODO',
+        JOURNAL = 'VJOURNAL',
+        FREE_BUSY = 'VFREEBUSY',
+        TIME_ZONE = 'VTIMEZONE',
+        STANDARD_TIME = 'STANDARD',
+        DAYLIGHT_SAVING_TIME = 'DAYLIGHT',
+        ALARM = 'VALARM',
         COMPONENT_BEGIN = 'BEGIN:',
         COMPONENT_END = 'END:',
         COMPONENTS = [
-        self::Calendar => Calendar::class,
-        self::Event => Event::class,
-        self::ToDo => ToDo::class,
-        self::Journal => Journal::class,
-        self::FreeBusy => FreeBusy::class,
-        self::TimeZone => TimeZone::class,
-        self::StandardTime => StandardTime::class,
-        self::DaylightSavingTime => DaylightSavingTime::class,
-        self::Alarm => Alarm::class
+        self::CALENDAR => Calendar::class,
+        self::EVENT => Event::class,
+        self::TO_DO => ToDo::class,
+        self::JOURNAL => Journal::class,
+        self::FREE_BUSY => FreeBusy::class,
+        self::TIME_ZONE => TimeZone::class,
+        self::STANDARD_TIME => StandardTime::class,
+        self::DAYLIGHT_SAVING_TIME => DaylightSavingTime::class,
+        self::ALARM => Alarm::class
     ];
 
     const
-        CalendarScale = 'CALSCALE',
-        Method = 'METHOD',
-        ProductIdentifier = 'PRODID',
-        Version = 'VERSION',
-        Attachment = 'ATTACH',
-        Categories = 'CATEGORIES',
-        Classification = 'CLASS',
-        Comment = 'COMMENT',
-        Description = 'DESCRIPTION',
-        GeographicPosition = 'GEO',
-        Location = 'LOCATION',
-        PercentComplete = 'PERCENT-COMPLETE',
-        Priority = 'PRIORITY',
-        Resources = 'RESOURCES',
-        Status = 'STATUS',
-        Summary = 'SUMMARY',
-        DateTimeCompleted = 'COMPLETED',
-        DateTimeEnd = 'DTEND',
-        DateTimeDue = 'DUE',
-        DateTimeStart = 'DTSTART',
-        Duration = 'DURATION',
-        FreeBusyTime = 'FREEBUSY',
-        TimeTransparency = 'TRANSP',
-        TimeZoneIdentifier = 'TZID',
-        TimeZoneName = 'TZNAME',
-        TimeZoneOffsetFrom = 'TZOFFSETFROM',
-        TimeZoneOffsetTo = 'TZOFFSETTO',
-        TimeZoneURL = 'TZURL',
-        Attendee = 'ATTENDEE',
-        Contact = 'CONTACT',
-        Organizer = 'ORGANIZER',
-        RecurrenceID = 'RECURRENCE-ID',
-        RelatedTo = 'RELATED-TO',
+        CALENDAR_SCALE = 'CALSCALE',
+        METHOD = 'METHOD',
+        PRODUCT_IDENTIFIER = 'PRODID',
+        VERSION = 'VERSION',
+        ATTACHMENT = 'ATTACH',
+        CATEGORIES = 'CATEGORIES',
+        CLASSIFICATION = 'CLASS',
+        COMMENT = 'COMMENT',
+        DESCRIPTION = 'DESCRIPTION',
+        GEOGRAPHIC_POSITION = 'GEO',
+        LOCATION = 'LOCATION',
+        PERCENT_COMPLETE = 'PERCENT-COMPLETE',
+        PRIORITY = 'PRIORITY',
+        RESOURCES = 'RESOURCES',
+        STATUS = 'STATUS',
+        SUMMARY = 'SUMMARY',
+        DATE_TIME_COMPLETED = 'COMPLETED',
+        DATE_TIME_END = 'DTEND',
+        DATE_TIME_DUE = 'DUE',
+        DATE_TIME_START = 'DTSTART',
+        DURATION = 'DURATION',
+        FREE_BUSY_TIME = 'FREEBUSY',
+        TIME_TRANSPARENCY = 'TRANSP',
+        // TIME_ZONE_IDENTIFIER = 'TZID', // already defined as parameter name
+        TIME_ZONE_NAME = 'TZNAME',
+        TIME_ZONE_OFFSET_FROM = 'TZOFFSETFROM',
+        TIME_ZONE_OFFSET_TO = 'TZOFFSETTO',
+        TIME_ZONE_URL = 'TZURL',
+        ATTENDEE = 'ATTENDEE',
+        CONTACT = 'CONTACT',
+        ORGANIZER = 'ORGANIZER',
+        RECURRENCE_ID = 'RECURRENCE-ID',
+        RELATED_TO = 'RELATED-TO',
         URL = 'URL',
-        UniqueIdentifier = 'UID',
-        ExceptionDateTimes = 'EXDATE',
-        RecurrenceDateTimes = 'RDATE',
-        RecurrenceRule = 'RRULE',
-        Action = 'ACTION',
-        RepeatCount = 'REPEAT',
-        Trigger = 'TRIGGER',
-        DateTimeCreated = 'CREATED',
-        DateTimeStamp = 'DTSTAMP',
-        LastModified = 'LAST-MODIFIED',
-        SequenceNumber = 'SEQUENCE',
-        RequestStatus = 'REQUEST-STATUS',
+        UNIQUE_IDENTIFIER = 'UID',
+        EXCEPTION_DATE_TIMES = 'EXDATE',
+        RECURRENCE_DATE_TIMES = 'RDATE',
+        RECURRENCE_RULE = 'RRULE',
+        ACTION = 'ACTION',
+        REPEAT_COUNT = 'REPEAT',
+        TRIGGER = 'TRIGGER',
+        DATE_TIME_CREATED = 'CREATED',
+        DATE_TIME_STAMP = 'DTSTAMP',
+        LAST_MODIFIED = 'LAST-MODIFIED',
+        SEQUENCE_NUMBER = 'SEQUENCE',
+        REQUEST_STATUS = 'REQUEST-STATUS',
         PROPERTIES = [
-        self::CalendarScale => CalendarScale::class,
-        self::Method => Method::class,
-        self::ProductIdentifier => ProductIdentifier::class,
-        self::Version => Version::class,
-        self::Attachment => Attachment::class,
-        self::Categories => Categories::class,
-        self::Classification => Classification::class,
-        self::Comment => Comment::class,
-        self::Description => Description::class,
-        self::GeographicPosition => GeographicPosition::class,
-        self::Location => Location::class,
-        self::PercentComplete => PercentComplete::class,
-        self::Priority => Priority::class,
-        self::Resources => Resources::class,
-        self::Status => Status::class,
-        self::Summary => Summary::class,
-        self::DateTimeCompleted => DateTimeCompleted::class,
-        self::DateTimeEnd => DateTimeEnd::class,
-        self::DateTimeDue => DateTimeDue::class,
-        self::DateTimeStart => DateTimeStart::class,
-        self::Duration => Duration::class,
-        self::FreeBusyTime => FreeBusyTime::class,
-        self::TimeTransparency => TimeTransparency::class,
-        self::TimeZoneIdentifier => TimeZoneIdentifier::class,
-        self::TimeZoneName => TimeZoneName::class,
-        self::TimeZoneOffsetFrom => TimeZoneOffsetFrom::class,
-        self::TimeZoneOffsetTo => TimeZoneOffsetTo::class,
-        self::TimeZoneURL => TimeZoneURL::class,
-        self::Attendee => Attendee::class,
-        self::Contact => Contact::class,
-        self::Organizer => Organizer::class,
-        self::RecurrenceID => RecurrenceID::class,
-        self::RelatedTo => RelatedTo::class,
+        self::CALENDAR_SCALE => CalendarScale::class,
+        self::METHOD => Method::class,
+        self::PRODUCT_IDENTIFIER => ProductIdentifier::class,
+        self::VERSION => Version::class,
+        self::ATTACHMENT => Attachment::class,
+        self::CATEGORIES => Categories::class,
+        self::CLASSIFICATION => Classification::class,
+        self::COMMENT => Comment::class,
+        self::DESCRIPTION => Description::class,
+        self::GEOGRAPHIC_POSITION => GeographicPosition::class,
+        self::LOCATION => Location::class,
+        self::PERCENT_COMPLETE => PercentComplete::class,
+        self::PRIORITY => Priority::class,
+        self::RESOURCES => Resources::class,
+        self::STATUS => Status::class,
+        self::SUMMARY => Summary::class,
+        self::DATE_TIME_COMPLETED => DateTimeCompleted::class,
+        self::DATE_TIME_END => DateTimeEnd::class,
+        self::DATE_TIME_DUE => DateTimeDue::class,
+        self::DATE_TIME_START => DateTimeStart::class,
+        self::DURATION => Duration::class,
+        self::FREE_BUSY_TIME => FreeBusyTime::class,
+        self::TIME_TRANSPARENCY => TimeTransparency::class,
+        self::TIME_ZONE_IDENTIFIER => TimeZoneIdentifier::class,
+        self::TIME_ZONE_NAME => TimeZoneName::class,
+        self::TIME_ZONE_OFFSET_FROM => TimeZoneOffsetFrom::class,
+        self::TIME_ZONE_OFFSET_TO => TimeZoneOffsetTo::class,
+        self::TIME_ZONE_URL => TimeZoneURL::class,
+        self::ATTENDEE => Attendee::class,
+        self::CONTACT => Contact::class,
+        self::ORGANIZER => Organizer::class,
+        self::RECURRENCE_ID => RecurrenceID::class,
+        self::RELATED_TO => RelatedTo::class,
         self::URL => URL::class,
-        self::UniqueIdentifier => UniqueIdentifier::class,
-        self::ExceptionDateTimes => ExceptionDateTimes::class,
-        self::RecurrenceDateTimes => RecurrenceDateTimes::class,
-        self::RecurrenceRule => RecurrenceRule::class,
-        self::Action => Action::class,
-        self::RepeatCount => RepeatCount::class,
-        self::Trigger => Trigger::class,
-        self::DateTimeCreated => DateTimeCreated::class,
-        self::DateTimeStamp => DateTimeStamp::class,
-        self::LastModified => LastModified::class,
-        self::SequenceNumber => SequenceNumber::class,
-        self::RequestStatus => RequestStatus::class
+        self::UNIQUE_IDENTIFIER => UniqueIdentifier::class,
+        self::EXCEPTION_DATE_TIMES => ExceptionDateTimes::class,
+        self::RECURRENCE_DATE_TIMES => RecurrenceDateTimes::class,
+        self::RECURRENCE_RULE => RecurrenceRule::class,
+        self::ACTION => Action::class,
+        self::REPEAT_COUNT => RepeatCount::class,
+        self::TRIGGER => Trigger::class,
+        self::DATE_TIME_CREATED => DateTimeCreated::class,
+        self::DATE_TIME_STAMP => DateTimeStamp::class,
+        self::LAST_MODIFIED => LastModified::class,
+        self::SEQUENCE_NUMBER => SequenceNumber::class,
+        self::REQUEST_STATUS => RequestStatus::class
     ];
 
     const
-        Binary = 'BINARY',
-        Boolean = 'BOOLEAN',
-        CalendarUserAddress = 'CAL-ADDRESS',
-        Date = 'DATE',
-        DateTime = 'DATE-TIME',
-        DurationValue = 'DURATION',
-        Float = 'FLOAT',
-        Integer = 'INTEGER',
-        PeriodOfTime = 'PERIOD',
-        RecurrenceRuleValue = 'RECUR',
-        Text = 'TEXT',
-        Time = 'TIME',
+        BINARY = 'BINARY',
+        BOOLEAN = 'BOOLEAN',
+        CALENDAR_USER_ADDRESS = 'CAL-ADDRESS',
+        DATE = 'DATE',
+        DATE_TIME = 'DATE-TIME',
+        DURATION_VALUE = 'DURATION',
+        FLOAT = 'FLOAT',
+        INTEGER = 'INTEGER',
+        PERIOD_OF_TIME = 'PERIOD',
+        RECURRENCE_RULE_VALUE = 'RECUR',
+        TEXT = 'TEXT',
+        TIME = 'TIME',
         URI = 'URI',
         UTCOffset = 'UTC-OFFSET',
         VALUES = [
-        self::Binary => Binary::class,
-        self::Boolean => Boolean::class,
-        self::CalendarUserAddress => CalendarUserAddress::class,
-        self::Date => Date::class,
-        self::DateTime => DateTime::class,
-        self::Duration => DurationValue::class,
-        self::Float => FloatValue::class,
-        self::Integer => Integer::class,
-        self::PeriodOfTime => PeriodOfTime::class,
-        self::RecurrenceRuleValue => RecurrenceRuleValue::class,
-        self::Text => Text::class,
-        self::Time => Time::class,
+        self::BINARY => Binary::class,
+        self::BOOLEAN => Boolean::class,
+        self::CALENDAR_USER_ADDRESS => CalendarUserAddress::class,
+        self::DATE => Date::class,
+        self::DATE_TIME => DateTime::class,
+        self::DURATION => DurationValue::class,
+        self::FLOAT => FloatValue::class,
+        self::INTEGER => Integer::class,
+        self::PERIOD_OF_TIME => PeriodOfTime::class,
+        self::RECURRENCE_RULE_VALUE => RecurrenceRuleValue::class,
+        self::TEXT => Text::class,
+        self::TIME => Time::class,
         self::URI => URI::class,
         self::UTCOffset => UTCOffset::class
     ];
 
     const PROPERTY_VALUES = [
-        self::CalendarScale => Text::class,
-        self::Method => Text::class,
-        self::ProductIdentifier => Text::class,
-        self::Version => Text::class,
-        self::Attachment => URI::class,
-        self::Categories => Text::class,
-        self::Classification => Text::class,
-        self::Comment => Text::class,
-        self::Description => Text::class,
-        self::GeographicPosition => FloatValue::class,
-        self::Location => Text::class,
-        self::PercentComplete => Integer::class,
-        self::Priority => Integer::class,
-        self::Resources => Text::class,
-        self::Status => Text::class,
-        self::Summary => Text::class,
-        self::DateTimeCompleted => DateTime::class,
-        self::DateTimeEnd => [
+        self::CALENDAR_SCALE => Text::class,
+        self::METHOD => Text::class,
+        self::PRODUCT_IDENTIFIER => Text::class,
+        self::VERSION => Text::class,
+        self::ATTACHMENT => URI::class,
+        self::CATEGORIES => Text::class,
+        self::CLASSIFICATION => Text::class,
+        self::COMMENT => Text::class,
+        self::DESCRIPTION => Text::class,
+        self::GEOGRAPHIC_POSITION => FloatValue::class,
+        self::LOCATION => Text::class,
+        self::PERCENT_COMPLETE => Integer::class,
+        self::PRIORITY => Integer::class,
+        self::RESOURCES => Text::class,
+        self::STATUS => Text::class,
+        self::SUMMARY => Text::class,
+        self::DATE_TIME_COMPLETED => DateTime::class,
+        self::DATE_TIME_END => [
             DateTime::class,
             Date::class
         ],
-        self::DateTimeDue => [
+        self::DATE_TIME_DUE => [
             DateTime::class,
             Date::class
         ],
-        self::DateTimeStart => [
+        self::DATE_TIME_START => [
             DateTime::class,
             Date::class
         ],
-        self::Duration => DurationValue::class,
-        self::FreeBusyTime => PeriodOfTime::class,
-        self::TimeTransparency => Text::class,
-        self::TimeZoneIdentifier => Text::class,
-        self::TimeZoneName => Text::class,
-        self::TimeZoneOffsetFrom => UTCOffset::class,
-        self::TimeZoneOffsetTo => UTCOffset::class,
-        self::TimeZoneURL => URI::class,
-        self::Attendee => CalendarUserAddress::class,
-        self::Contact => Text::class,
-        self::Organizer => CalendarUserAddress::class,
-        self::RecurrenceID => [
+        self::DURATION => DurationValue::class,
+        self::FREE_BUSY_TIME => PeriodOfTime::class,
+        self::TIME_TRANSPARENCY => Text::class,
+        self::TIME_ZONE_IDENTIFIER => Text::class,
+        self::TIME_ZONE_NAME => Text::class,
+        self::TIME_ZONE_OFFSET_FROM => UTCOffset::class,
+        self::TIME_ZONE_OFFSET_TO => UTCOffset::class,
+        self::TIME_ZONE_URL => URI::class,
+        self::ATTENDEE => CalendarUserAddress::class,
+        self::CONTACT => Text::class,
+        self::ORGANIZER => CalendarUserAddress::class,
+        self::RECURRENCE_ID => [
             DateTime::class,
             Date::class
         ],
-        self::RelatedTo => Text::class,
+        self::RELATED_TO => Text::class,
         self::URL => URI::class,
-        self::UniqueIdentifier => Text::class,
-        self::ExceptionDateTimes => [
+        self::UNIQUE_IDENTIFIER => Text::class,
+        self::EXCEPTION_DATE_TIMES => [
             DateTime::class,
             Date::class
         ],
-        self::RecurrenceDateTimes => [
+        self::RECURRENCE_DATE_TIMES => [
             DateTime::class,
             Date::class,
             PeriodOfTime::class
         ],
-        self::RecurrenceRule => RecurrenceRuleValue::class,
-        self::Action => Text::class,
-        self::RepeatCount => Integer::class,
-        self::Trigger => [
+        self::RECURRENCE_RULE => RecurrenceRuleValue::class,
+        self::ACTION => Text::class,
+        self::REPEAT_COUNT => Integer::class,
+        self::TRIGGER => [
             DurationValue::class,
             DateTime::class
         ],
-        self::DateTimeCreated => DateTime::class,
-        self::DateTimeStamp => DateTime::class,
-        self::LastModified => DateTime::class,
-        self::SequenceNumber => Integer::class,
-        self::RequestStatus => Text::class
+        self::DATE_TIME_CREATED => DateTime::class,
+        self::DATE_TIME_STAMP => DateTime::class,
+        self::LAST_MODIFIED => DateTime::class,
+        self::SEQUENCE_NUMBER => Integer::class,
+        self::REQUEST_STATUS => Text::class
     ];
 
     /** @link https://tools.ietf.org/html/rfc5545#section-3.3.1 &sect;3.3.1. Binary */
     const
-        b_char = '(?:' . ABNF::ALPHA . '|\\d|[\\+\\/])',
-        b_end = '(?:' . self::b_char . '{2,2}==|' . self::b_char . '{3,3}=)',
-        binary = '(?:(?:' . self::b_char . '{4,4})*' . self::b_end . '?)';
+        _B_CHAR = '(?:' . ABNF::ALPHA . '|\\d|[\\+\\/])',
+        _B_END = '(?:' . self::_B_CHAR . '{2,2}==|' . self::_B_CHAR . '{3,3}=)',
+        PATTERN_BINARY = '(?:(?:' . self::_B_CHAR . '{4,4})*' . self::_B_END . '?)';
 
     /** @link https://tools.ietf.org/html/rfc5545#section-3.3.2 &sect;3.3.2. Boolean */
-    const boolean = '(?:TRUE|FALSE)';
+    const PATTERN_BOOLEAN = '(?:TRUE|FALSE)';
 
     /** @link https://tools.ietf.org/html/rfc5545#section-3.3.13 &sect;3.3.13. URI */
-    const uri = RFC3986::URI;
+    const PATTERN_URI = RFC3986::URI;
 
     /** @link https://tools.ietf.org/html/rfc5545#section-3.3.3 &sect3.3.3. Calendar User Address */
-    const cal_address = self::uri;
+    const PATTERN_CALENDAR_USER_ADDRESS = self::PATTERN_URI;
 
     /** @link https://tools.ietf.org/html/rfc5545#section-3.3.4 &sect;3.3.4. Date */
     const
-        date_mday = '(?:\\d{2,2})',
-        date_month = '(?:\\d{2,2})',
-        date_fullyear = '(?:\\d{4,4})',
-        date = '(?:' . self::date_fullyear . self::date_month . self::date_mday . ')';
+        _DATE_MDAY = '(?:\\d{2,2})',
+        _DATE_MONTH = '(?:\\d{2,2})',
+        _DATE_FULLYEAR = '(?:\\d{4,4})',
+        PATTERN_DATE = '(?:' . self::_DATE_FULLYEAR . self::_DATE_MONTH . self::_DATE_MDAY . ')';
 
     /** @link https://tools.ietf.org/html/rfc5545#section-3.3.12 &sect;3.3.12 Time */
     const
-        time_utc = 'Z',
-        time_second = '(?:\\d{2,2})',
-        time_minute = '(?:\\d{2,2})',
-        time_hour = '(?:\\d{2,2})',
-        time = '(?:' . self::time_hour . self::time_minute . self::time_second . self::time_utc . '?)';
+        _TIME_UTC = 'Z',
+        _TIME_SECOND = '(?:\\d{2,2})',
+        _TIME_MINUTE = '(?:\\d{2,2})',
+        _TIME_HOUR = '(?:\\d{2,2})',
+        PATTERN_TIME = '(?:' . self::_TIME_HOUR . self::_TIME_MINUTE . self::_TIME_SECOND . self::_TIME_UTC . '?)';
 
     /** @link https://tools.ietf.org/html/rfc5545#section-3.3.5 &sect;3.3.5. Date-Time */
-    const date_time = '(?:' . self::date . 'T' . self::time . ')';
+    const PATTERN_DATE_TIME = '(?:' . self::PATTERN_DATE . 'T' . self::PATTERN_TIME . ')';
 
     /** @link https://tools.ietf.org/html/rfc5545#section-3.3.6 &sect;3.3.6. Duration */
     const
-        dur_second = '(?:\\d+S)',
-        dur_minute = '(?:\\d+M(?:' . self::dur_second . ')?)',
-        dur_hour = '(?:\\d+H(?:' . self::dur_minute . ')?)',
-        dur_day = '(?:\\d+D:)',
-        dur_week = '(?:\\d+W)',
-        dur_time = '(?:T(?:' . self::dur_hour . '|' . self::dur_minute . '|' . self::dur_second . '))',
-        dur_date = '(?:' . self::dur_day . '(?:' . self::dur_time . ')?)',
-        dur_value = '(?:[+-]?P(?:' . self::dur_date . '|' . self::dur_time . '|' . self::dur_week . '))';
+        _DUR_SECOND = '(?:\\d+S)',
+        _DUR_MINUTE = '(?:\\d+M(?:' . self::_DUR_SECOND . ')?)',
+        _DUR_HOUR = '(?:\\d+H(?:' . self::_DUR_MINUTE . ')?)',
+        _DUR_DAY = '(?:\\d+D:)',
+        _DUR_WEEK = '(?:\\d+W)',
+        _DUR_TIME = '(?:T(?:' . self::_DUR_HOUR . '|' . self::_DUR_MINUTE . '|' . self::_DUR_SECOND . '))',
+        _DUR_DATE = '(?:' . self::_DUR_DAY . '(?:' . self::_DUR_TIME . ')?)',
+        PATTERN_DUR_VALUE = '(?:[+-]?P(?:' . self::_DUR_DATE . '|' . self::_DUR_TIME . '|' . self::_DUR_WEEK . '))';
 
     /** @link https://tools.ietf.org/html/rfc5545#section-3.3.7 &sect;3.3.7. FLoat */
-    const float = '(?:[+\\-]?\\d+\\.\\d+)';
+    const PATTERN_FLOAT = '(?:[+\\-]?\\d+\\.\\d+)';
 
     /** @link https://tools.ietf.org/html/rfc5545#section-3.3.8 &sect;3.3.8. Integer */
-    const integer = '(?:[+\\-]?\\d+)';
+    const PATTERN_INTEGER = '(?:[+\\-]?\\d+)';
 
     /** @link https://tools.ietf.org/html/rfc5545#section-3.3.9 &sect;3.3.9. Period of Time */
     const
-        period_explicit = '(?:' . self::date_time . '|' . self::date_time . ')',
-        period_start = '(?:' . self::date_time . '|' . self::dur_value . ')',
-        period_value = '(?:' . self::period_explicit . '|' . self::period_start . ')',
-        period = '(?:' . self::period_explicit . '|' . self::period_start . ')';
+        _PERIOD_EXPLICIT = '(?:' . self::PATTERN_DATE_TIME . '|' . self::PATTERN_DATE_TIME . ')',
+        _PERIOD_START = '(?:' . self::PATTERN_DATE_TIME . '|' . self::PATTERN_DUR_VALUE . ')',
+        _PERIOD_VALUE = '(?:' . self::_PERIOD_EXPLICIT . '|' . self::_PERIOD_START . ')',
+        PATTERN_PERIOD_OF_TIME = '(?:' . self::_PERIOD_EXPLICIT . '|' . self::_PERIOD_START . ')';
 
     /** @link https://tools.ietf.org/html/rfc5545#section-3.3.10 &sect;3.3.10. Recrurrence Rule */
     const
-        ordyrday = '(?:\\d{1,3})',
-        yeardaynum = '(?:[+\\-]?' . self::ordyrday . ')',
-        setposday = self::yeardaynum,
-        bysplist = '(?:' . self::setposday . '(?:,' . self::setposday . ')*)',
-        monthnum = '(?:\\d{1,2})',
-        bymolist = '(?:' . self::monthnum . '(?:,' . self::monthnum . ')*)',
-        ordwk = '(?:\\d{1,2})',
-        weeknum = '(?:(?:[+\\-]?)' . self::ordwk . ')',
-        bywknolist = '(?:' . self::weeknum . '(?:,' . self::weeknum . ')*)',
-        byyrdaylist = '(?:' . self::yeardaynum . '(?:,' . self::yeardaynum . ')*)',
-        ordmoday = '(?:\\d{1,2})',
-        monthdaynum = '(?:[+\\-]?)' . self::ordmoday,
-        bymodaylist = self::monthdaynum . '(?:,' . self::monthdaynum . ')*',
-        weekday = '(?:SU|MO|TU|WE|TH|FR|SA)',
-        weekdaynum = '(?:[+\\-]?' . self::ordwk . ')?' . self::weekday,
-        bywdaylist = '(?:' . self::weekdaynum . '(?:,' . self::weekdaynum . ')*)',
-        hour = '(?:\\d{1,2})',
-        byhrlist = '(?:' . self::hour . '(?:,' . self::hour . ')*)',
-        minutes = '(?:\\d{1,2})',
-        byminlist = '(?:' . self::minutes . '(?:,' . self::minutes . ')*)',
-        seconds = '(?:\\d{1,2})',
-        byseclist = '(?:' . self::seconds . '(?:,' . self::seconds . ')*)',
-        enddate = '(?:' . self::date . '|' . self::date_time . ')',
+        _ORDYRDAY = '(?:\\d{1,3})',
+        _YEARDAYNUM = '(?:[+\\-]?' . self::_ORDYRDAY . ')',
+        _SETPOSDAY = self::_YEARDAYNUM,
+        _BYSPLIST = '(?:' . self::_SETPOSDAY . '(?:,' . self::_SETPOSDAY . ')*)',
+        _MONTHNUM = '(?:\\d{1,2})',
+        _BYMOLIST = '(?:' . self::_MONTHNUM . '(?:,' . self::_MONTHNUM . ')*)',
+        _ORDWK = '(?:\\d{1,2})',
+        _WEEKNUM = '(?:(?:[+\\-]?)' . self::_ORDWK . ')',
+        _BYWKNOLIST = '(?:' . self::_WEEKNUM . '(?:,' . self::_WEEKNUM . ')*)',
+        _BYYRDAYLIST = '(?:' . self::_YEARDAYNUM . '(?:,' . self::_YEARDAYNUM . ')*)',
+        _ORDMODAY = '(?:\\d{1,2})',
+        _MONTHDAYNUM = '(?:[+\\-]?)' . self::_ORDMODAY,
+        _BYMODAYLIST = self::_MONTHDAYNUM . '(?:,' . self::_MONTHDAYNUM . ')*',
+        _WEEKDAY = '(?:SU|MO|TU|WE|TH|FR|SA)',
+        _WEEKDAYNUM = '(?:[+\\-]?' . self::_ORDWK . ')?' . self::_WEEKDAY,
+        _BYWDAYLIST = '(?:' . self::_WEEKDAYNUM . '(?:,' . self::_WEEKDAYNUM . ')*)',
+        _HOUR = '(?:\\d{1,2})',
+        _BYHRLIST = '(?:' . self::_HOUR . '(?:,' . self::_HOUR . ')*)',
+        _MINUTES = '(?:\\d{1,2})',
+        _BYMINLIST = '(?:' . self::_MINUTES . '(?:,' . self::_MINUTES . ')*)',
+        _SECONDS = '(?:\\d{1,2})',
+        _BYSECLIST = '(?:' . self::_SECONDS . '(?:,' . self::_SECONDS . ')*)',
+        _ENDDATE = '(?:' . self::PATTERN_DATE . '|' . self::PATTERN_DATE_TIME . ')',
         SECONDLY = 'SECONDLY',
         MINUTELY = 'MINUTELY',
         HOURLY = 'HOURLY',
@@ -512,7 +512,7 @@ interface RFC5545
         WEEKLY = 'WEEKLY',
         MONTHLY = 'MONTHLY',
         YEARLY = 'YEARLY',
-        freq = '(?:' . self::SECONDLY . '|' . self::MINUTELY . '|' . self::HOURLY . '|' . self::DAILY . '|' . self::WEEKLY . '|' . self::MONTHLY . '|' . self::YEARLY . ')',
+        _FREQ = '(?:' . self::SECONDLY . '|' . self::MINUTELY . '|' . self::HOURLY . '|' . self::DAILY . '|' . self::WEEKLY . '|' . self::MONTHLY . '|' . self::YEARLY . ')',
         FREQ = 'FREQ',
         UNTIL = 'UNTIL',
         COUNT = 'COUNT',
@@ -527,52 +527,79 @@ interface RFC5545
         BYMONTH = 'BYMONTH',
         BYSETPOS = 'BYSETPOS',
         WKST = 'WKST',
+        RECURRENCE_RULES_PARTS = [
+        self::FREQ,
+        self::UNTIL,
+        self::COUNT,
+        self::INTERVAL,
+        self::WKST,
+        self::BYMONTH,
+        self::BYWEEKNO,
+        self::BYYEARDAY,
+        self::BYMONTHDAY,
+        self::BYDAY,
+        self::BYHOUR,
+        self::BYMINUTE,
+        self::BYSECOND,
+        self::BYSETPOS
+    ],
+        RECURRENCE_RULE_PRECEDENCE = [
+        self::BYMONTH,
+        self::BYWEEKNO,
+        self::BYYEARDAY,
+        self::BYMONTHDAY,
+        self::BYDAY,
+        self::BYHOUR,
+        self::BYMINUTE,
+        self::BYSECOND,
+        self::BYSETPOS
+    ],
         recur_rule_part =
         '(?:' .
-        self::FREQ . self::FIELD_SEPARATOR . self::freq . '|' .
-        self::UNTIL . self::FIELD_SEPARATOR . self::enddate . '|' .
+        self::FREQ . self::FIELD_SEPARATOR . self::_FREQ . '|' .
+        self::UNTIL . self::FIELD_SEPARATOR . self::_ENDDATE . '|' .
         self::COUNT . self::FIELD_SEPARATOR . '\\d+|' .
         self::INTERVAL . self::FIELD_SEPARATOR . '\\d+|' .
-        self::BYSECOND . self::FIELD_SEPARATOR . self::byseclist . '|' .
-        self::BYMINUTE . self::FIELD_SEPARATOR . self::byminlist . '|' .
-        self::BYHOUR . self::FIELD_SEPARATOR . self::byhrlist . '|' .
-        self::BYDAY . self::FIELD_SEPARATOR . self::bywdaylist . '|' .
-        self::BYMONTHDAY . self::FIELD_SEPARATOR . self::bymodaylist . '|' .
-        self::BYYEARDAY . self::FIELD_SEPARATOR . self::byyrdaylist . '|' .
-        self::BYWEEKNO . self::FIELD_SEPARATOR . self::bywknolist . '|' .
-        self::BYMONTH . self::FIELD_SEPARATOR . self::bymolist . '|' .
-        self::BYSETPOS . self::FIELD_SEPARATOR . self::bysplist . '|' .
-        self::WKST . self::FIELD_SEPARATOR . self::weekday .
+        self::BYSECOND . self::FIELD_SEPARATOR . self::_BYSECLIST . '|' .
+        self::BYMINUTE . self::FIELD_SEPARATOR . self::_BYMINLIST . '|' .
+        self::BYHOUR . self::FIELD_SEPARATOR . self::_BYHRLIST . '|' .
+        self::BYDAY . self::FIELD_SEPARATOR . self::_BYWDAYLIST . '|' .
+        self::BYMONTHDAY . self::FIELD_SEPARATOR . self::_BYMODAYLIST . '|' .
+        self::BYYEARDAY . self::FIELD_SEPARATOR . self::_BYYRDAYLIST . '|' .
+        self::BYWEEKNO . self::FIELD_SEPARATOR . self::_BYWKNOLIST . '|' .
+        self::BYMONTH . self::FIELD_SEPARATOR . self::_BYMOLIST . '|' .
+        self::BYSETPOS . self::FIELD_SEPARATOR . self::_BYSPLIST . '|' .
+        self::WKST . self::FIELD_SEPARATOR . self::_WEEKDAY .
         ')',
-        recur = '(?:' . self::recur_rule_part . '(?:;' . self::recur_rule_part . ')*)';
+        PATTERN_RECURRENCE_RULE_VALUE = '(?:' . self::recur_rule_part . '(?:;' . self::recur_rule_part . ')*)';
 
     /** @link https://tools.ietf.org/html/rfc5545#section-3.3.13 &sect;3.3.13. Text */
     const
-        TSAFE_CHAR = '(?:' . self::WSP . '|[\\x21\\x23-\\x2B\\x2D-\\x39\\x3C-\\x5B\\x5D-\\x7E]|' . self::NON_US_ASCII . ')',
+        _TSAFE_CHAR = '(?:' . self::WSP . '|[\\x21\\x23-\\x2B\\x2D-\\x39\\x3C-\\x5B\\x5D-\\x7E]|' . self::NON_US_ASCII . ')',
         ESCAPE_CHAR = '\\',
-        ESCAPED_CHAR = '(?:' . self::ESCAPE_CHAR . self::ESCAPE_CHAR . '|' . self::ESCAPE_CHAR . ';|' . self::ESCAPE_CHAR . ',|' . self::ESCAPE_CHAR . '[Nn])',
-        text = '(?:(?:' . self::TSAFE_CHAR . '|[:"]|' . self::ESCAPED_CHAR . ')*)';
+        _ESCAPED_CHAR = '(?:' . self::ESCAPE_CHAR . self::ESCAPE_CHAR . '|' . self::ESCAPE_CHAR . ';|' . self::ESCAPE_CHAR . ',|' . self::ESCAPE_CHAR . '[Nn])',
+        PATTERN_TEXT = '(?:(?:' . self::_TSAFE_CHAR . '|[:"]|' . self::_ESCAPED_CHAR . ')*)';
 
     /** @link https://tools.ietf.org/html/rfc5545#section-3.3.14 &sect;3.3.14. UTC Offset */
     const
-        time_numzone = '[+\\-]' . self::time_hour . self::time_minute . self::time_second . '?',
-        utc_offset = self::time_numzone;
+        _TIME_NUMZONE = '[+\\-]' . self::_TIME_HOUR . self::_TIME_MINUTE . self::_TIME_SECOND . '?',
+        PATTERN_UTC_OFFSET = self::_TIME_NUMZONE;
 
     /** @link https://tools.ietf.org/html/rfc5545#section-3.3 &sect;3.3. Property Value Data Types */
     const PROPERTY_VALUE_DATA_TYPES = [
-        Binary::class => self::binary,
-        Boolean::class => self::boolean,
-        CalendarUserAddress::class => self::cal_address,
-        Date::class => self::date,
-        DateTime::class => self::date_time,
-        DurationValue::class => self::dur_value,
-        FloatValue::class => self::float,
-        Integer::class => self::integer,
-        PeriodOfTime::class => self::period,
-        RecurrenceRuleValue::class => self::recur,
-        Text::class => self::text,
-        Time::class => self::time,
-        URI::class => self::uri,
-        UTCOffset::class => self::utc_offset
+        Binary::class => self::PATTERN_BINARY,
+        Boolean::class => self::PATTERN_BOOLEAN,
+        CalendarUserAddress::class => self::PATTERN_CALENDAR_USER_ADDRESS,
+        Date::class => self::PATTERN_DATE,
+        DateTime::class => self::PATTERN_DATE_TIME,
+        DurationValue::class => self::PATTERN_DUR_VALUE,
+        FloatValue::class => self::PATTERN_FLOAT,
+        Integer::class => self::PATTERN_INTEGER,
+        PeriodOfTime::class => self::PATTERN_PERIOD_OF_TIME,
+        RecurrenceRuleValue::class => self::PATTERN_RECURRENCE_RULE_VALUE,
+        Text::class => self::PATTERN_TEXT,
+        Time::class => self::PATTERN_TIME,
+        URI::class => self::PATTERN_URI,
+        UTCOffset::class => self::PATTERN_UTC_OFFSET
     ];
 }

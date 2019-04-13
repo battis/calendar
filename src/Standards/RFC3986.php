@@ -9,15 +9,15 @@ namespace Battis\Calendar\Standards;
 interface RFC3986
 {
     const
-        pct_encoded = '%' . ABNF::HEXDIG . ABNF::HEXDIG,
-        gen_delims = '[:\\/\\?#\\]\\]@]',
-        sub_delims = '[\\!\\$\\&\'\\(\\)\\*\\+,;=]',
-        unreserved = '(?:' . ABNF::ALPHA . '|\\d|[\\-\\._\\~])',
-        scheme = '(?:' . ABNF::ALPHA . '(?:' . ABNF::ALPHA . '|\\d|[+-.])*)',
-        userinfo = '(?:(?:' . self::unreserved . '|' . self::pct_encoded . '|' . self::sub_delims . '|:)*)',
-        reg_name = '(?:(?:' . self::unreserved . '|' . self::pct_encoded . '|' . self::sub_delims . ')*)',
-        host = '(?:' . self::IP_literal . '|' . self::IPv4address . '|' . self::reg_name . ')',
-        dec_octet =
+        PCT_ENCODED = '%' . ABNF::HEXDIG . ABNF::HEXDIG,
+        GEN_DELIMS = '[:\\/\\?#\\]\\]@]',
+        SUB_DELIMS = '[\\!\\$\\&\'\\(\\)\\*\\+,;=]',
+        UNRESERVED = '(?:' . ABNF::ALPHA . '|\\d|[\\-\\._\\~])',
+        SCHEME = '(?:' . ABNF::ALPHA . '(?:' . ABNF::ALPHA . '|\\d|[+-.])*)',
+        USERINFO = '(?:(?:' . self::UNRESERVED . '|' . self::PCT_ENCODED . '|' . self::SUB_DELIMS . '|:)*)',
+        REG_NAME = '(?:(?:' . self::UNRESERVED . '|' . self::PCT_ENCODED . '|' . self::SUB_DELIMS . ')*)',
+        HOST = '(?:' . self::IP_LITERAL . '|' . self::IP_V4ADDRESS . '|' . self::REG_NAME . ')',
+        DEC_OCTET =
         '(?:' .
         '\\d|' .
         '[\\x31-\\x39]\\d|' .
@@ -25,37 +25,37 @@ interface RFC3986
         '2[\\x30-\\x34]\\d|' .
         '25[\\x30-\\x35]' .
         ')',
-        IPv4address = '(?:' . self::dec_octet . '\\.' . self::dec_octet . '\\.' . self::dec_octet . '\\.' . self::dec_octet . ')',
-        h16 = '(?:(?:' . ABNF::HEXDIG . '{4,4})+)',
-        ls32 = '(?:' . self::h16 . ':' . self::h16 . '|' . self::IPv4address . ')',
-        IPv6address =
+        IP_V4ADDRESS = '(?:' . self::DEC_OCTET . '\\.' . self::DEC_OCTET . '\\.' . self::DEC_OCTET . '\\.' . self::DEC_OCTET . ')',
+        H16 = '(?:(?:' . ABNF::HEXDIG . '{4,4})+)',
+        LS32 = '(?:' . self::H16 . ':' . self::H16 . '|' . self::IP_V4ADDRESS . ')',
+        IP_V6ADDRESS =
         '(?:' .
-        '(?:' . self::h16 . ':){6,6}' . self::ls32 . '|' .
-        '::(?:' . self::h16 . ':){5,5}' . self::ls32 . '|' .
-        '(?:' . self::h16 . ')?::(?:' . self::h16 . ':){4,4}' . self::ls32 . '|' .
-        '(?:(?:' . self::h16 . ':){,1}' . self::h16 . ')?::(:' . self::h16 . ':){3,3}' . self::ls32 . '|' .
-        '(?:(?:' . self::h16 . ':){,2}' . self::h16 . ')?::(?:' . self::h16 . ':){2,2}' . self::ls32 . '|' .
-        '(?:(?:' . self::h16 . ':){,3}' . self::h16 . ')?::' . self::h16 . ':' . self::ls32 . '|' .
-        '(?:(?:' . self::h16 . ':){,4}' . self::h16 . ')?::' . self::ls32 . '|' .
-        '(?:(?:' . self::h16 . ':){,5}' . self::h16 . ')?::' . self::h16 . '|' .
-        '(?:(?:' . self::h16 . ':){,6}' . self::h16 . ')?::' .
+        '(?:' . self::H16 . ':){6,6}' . self::LS32 . '|' .
+        '::(?:' . self::H16 . ':){5,5}' . self::LS32 . '|' .
+        '(?:' . self::H16 . ')?::(?:' . self::H16 . ':){4,4}' . self::LS32 . '|' .
+        '(?:(?:' . self::H16 . ':){,1}' . self::H16 . ')?::(:' . self::H16 . ':){3,3}' . self::LS32 . '|' .
+        '(?:(?:' . self::H16 . ':){,2}' . self::H16 . ')?::(?:' . self::H16 . ':){2,2}' . self::LS32 . '|' .
+        '(?:(?:' . self::H16 . ':){,3}' . self::H16 . ')?::' . self::H16 . ':' . self::LS32 . '|' .
+        '(?:(?:' . self::H16 . ':){,4}' . self::H16 . ')?::' . self::LS32 . '|' .
+        '(?:(?:' . self::H16 . ':){,5}' . self::H16 . ')?::' . self::H16 . '|' .
+        '(?:(?:' . self::H16 . ':){,6}' . self::H16 . ')?::' .
         ')',
-        IPvFuture = '(?:v' . ABNF::HEXDIG . '+\\.(?:' . self::unreserved . '|' . self::sub_delims . '|:)+)',
-        IP_literal = '(?:\\[(?:' . self::IPv6address . '|' . self::IPvFuture . ')\\])',
-        port = '(?:\\d*)',
-        authority = '(?:(?:' . self::userinfo . '@)?' . self::host . '(?::' . self::port . ')?)',
-        pchar = '(?:' . self::unreserved . '|' . self::pct_encoded . '|' . self::sub_delims . '|@)',
-        segment_nz_nc = '(?:(?:' . self::unreserved . '|' . self::pct_encoded . '|' . self::sub_delims . '@)+)',
-        segment_nz = '(?:' . self::pchar . '+)',
-        segment = '(?:' . self::pchar . '*)',
-        path_empty = '(?:' . self::pchar . '{0,0})',
-        path_rootless = '(?:' . self::segment_nz . '(?:\\/' . self::segment . ')*)',
-        path_noscheme = '(?:' . self::segment_nz_nc . '(?:\\/' . self::segment . ')*)',
-        path_absolute = '(?:\\/(?:' . self::segment_nz . '(?:\\/' . self::segment . ')*)?)',
-        path_abempty = '(?:(?:\\/' . self::segment . ')*)',
-        path = '(?:' . self::path_abempty . '|' . self::path_absolute . '|' . self::path_noscheme . '|' . self::path_rootless . '|' . self::path_empty . ')',
-        hier_part = '(?:\\/\\/' . self::authority . self::path_abempty . '|' . self::path_absolute . '|' . self::path_rootless . '|' . self::path_empty . ')',
-        query = '(?:(?:' . self::pchar . '|\\/|\\?)*)',
-        fragment = '(?:(?:' . self::pchar . '|\\/|\\?)*)',
-        URI = '(?:' . self::scheme . ':' . self::hier_part . '(?:\\?' . self::query . ')?(?:#' . self::fragment . ')?)';
+        IP_VFUTURE = '(?:v' . ABNF::HEXDIG . '+\\.(?:' . self::UNRESERVED . '|' . self::SUB_DELIMS . '|:)+)',
+        IP_LITERAL = '(?:\\[(?:' . self::IP_V6ADDRESS . '|' . self::IP_VFUTURE . ')\\])',
+        PORT = '(?:\\d*)',
+        AUTHORITY = '(?:(?:' . self::USERINFO . '@)?' . self::HOST . '(?::' . self::PORT . ')?)',
+        PCHAR = '(?:' . self::UNRESERVED . '|' . self::PCT_ENCODED . '|' . self::SUB_DELIMS . '|@)',
+        SEGMENT_NZ_NC = '(?:(?:' . self::UNRESERVED . '|' . self::PCT_ENCODED . '|' . self::SUB_DELIMS . '@)+)',
+        SEGMENT_NZ = '(?:' . self::PCHAR . '+)',
+        SEGMENT = '(?:' . self::PCHAR . '*)',
+        PATH_EMPTY = '(?:' . self::PCHAR . '{0,0})',
+        PATH_ROOTLESS = '(?:' . self::SEGMENT_NZ . '(?:\\/' . self::SEGMENT . ')*)',
+        PATH_NOSCHEME = '(?:' . self::SEGMENT_NZ_NC . '(?:\\/' . self::SEGMENT . ')*)',
+        PATH_ABSOLUTE = '(?:\\/(?:' . self::SEGMENT_NZ . '(?:\\/' . self::SEGMENT . ')*)?)',
+        PATH_ABEMPTY = '(?:(?:\\/' . self::SEGMENT . ')*)',
+        PATH = '(?:' . self::PATH_ABEMPTY . '|' . self::PATH_ABSOLUTE . '|' . self::PATH_NOSCHEME . '|' . self::PATH_ROOTLESS . '|' . self::PATH_EMPTY . ')',
+        HIER_PART = '(?:\\/\\/' . self::AUTHORITY . self::PATH_ABEMPTY . '|' . self::PATH_ABSOLUTE . '|' . self::PATH_ROOTLESS . '|' . self::PATH_EMPTY . ')',
+        QUERY = '(?:(?:' . self::PCHAR . '|\\/|\\?)*)',
+        FRAGMENT = '(?:(?:' . self::PCHAR . '|\\/|\\?)*)',
+        URI = '(?:' . self::SCHEME . ':' . self::HIER_PART . '(?:\\?' . self::QUERY . ')?(?:#' . self::FRAGMENT . ')?)';
 }

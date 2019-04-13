@@ -4,9 +4,9 @@
 namespace Battis\Calendar\Components\TimeZone;
 
 
-use Battis\Calendar\Component;
+use Battis\Calendar\Components\RecurringComponent;
 
-class StandardTime extends Component
+class StandardTime extends RecurringComponent
 {
 
 }

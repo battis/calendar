@@ -7,6 +7,7 @@ namespace Battis\Calendar\Workflows;
 use Battis\Calendar\Calendar;
 use Battis\Calendar\Component;
 use Battis\Calendar\Components\Undefined;
+use Battis\Calendar\Exceptions\PropertyException;
 use Battis\Calendar\Exceptions\ValueException;
 use Battis\Calendar\Parameter;
 use Battis\Calendar\Parameters\IANAParameter;
@@ -35,10 +36,11 @@ class iCalendar implements Parser, Exporter
 
     /**
      * @param string $path
-     * @param null $type
+     * @param Calendar|string $type
      * @param mixed ...$constructorParameters
      * @return Component
      * @throws ValueException
+     * @throws PropertyException
      */
     public static function parseFile(string $path, $type = null, ...$constructorParameters): Component
     {
@@ -47,16 +49,17 @@ class iCalendar implements Parser, Exporter
 
     /**
      * @param string $text
-     * @param string|Calendar $type (Optional, default `null`)
+     * @param Calendar|string $type (Optional, default `null`)
      * @param mixed $constructorParameters
-     * @return Component
+     * @return Component|null
      * @throws ValueException
+     * @throws PropertyException
      */
-    public static function parse(string $text, $type = null, ...$constructorParameters): Component
+    public static function parse(string $text, $type = null, ...$constructorParameters): ?Component
     {
         $unparsed = explode(RFC5545::CRLF, self::unfold($text));
         while (($line = array_shift($unparsed)) !== null) {
-            if (preg_match(self::REGEX_START . RFC5545::COMPONENT_BEGIN . '(' . RFC5545::iana_token . ')' . self::REGEX_END, $line, $match)) {
+            if (preg_match(self::REGEX_START . RFC5545::COMPONENT_BEGIN . '(' . RFC5545::IANA_TOKEN . ')' . self::REGEX_END, $line, $match)) {
                 if ($type === null && isset(RFC5545::COMPONENTS[$match[1]])) {
                     $type = RFC5545::COMPONENTS[$match[1]];
                 }
@@ -68,7 +71,7 @@ class iCalendar implements Parser, Exporter
 
     /**
      * @param string $text
-     * @return string[]
+     * @return string
      */
     private static function unfold(string $text): string
     {
@@ -78,12 +81,13 @@ class iCalendar implements Parser, Exporter
     /**
      * @param string[] $unparsed
      * @param string|null $name
-     * @param string|Component $type (Optional, default `null`)
+     * @param Component|string $type (Optional, default `null`)
      * @param mixed $constructorParameters
-     * @return Component
+     * @return Component|null
      * @throws ValueException
+     * @throws PropertyException
      */
-    private static function parseComponent(array &$unparsed, string $name = null, $type = null, ...$constructorParameters)
+    private static function parseComponent(array &$unparsed, ?string $name = null, $type = null, ...$constructorParameters): ?Component
     {
         $properties = [];
         $subcomponents = [];
@@ -92,7 +96,7 @@ class iCalendar implements Parser, Exporter
             $line = array_shift($unparsed);
             if (preg_match(self::REGEX_START . RFC5545::COMPONENT_END . $name . self::REGEX_END, $line)) {
                 $end = true;
-            } elseif (preg_match(self::REGEX_START . RFC5545::COMPONENT_BEGIN . '(' . RFC5545::iana_token . ')' . self::REGEX_END, $line, $match)) {
+            } elseif (preg_match(self::REGEX_START . RFC5545::COMPONENT_BEGIN . '(' . RFC5545::IANA_TOKEN . ')' . self::REGEX_END, $line, $match)) {
                 array_push($subcomponents, self::parseComponent($unparsed, $match[1]));
             } elseif (!empty($line)) {
                 array_push($properties, self::parseProperty($line));
@@ -105,7 +109,7 @@ class iCalendar implements Parser, Exporter
      * @param string $name
      * @param array $properties
      * @param array $subcomponents
-     * @param string|Component $type (Optional, default `null`)
+     * @param Component|string $type (Optional, default `null`)
      * @return Component
      */
     private static function instantiateComponent(string $name, array $properties = [], array $subcomponents = [], $type = null, ...$constructorParameters): Component
@@ -128,12 +132,14 @@ class iCalendar implements Parser, Exporter
      * @param string $unparsed
      * @return Property|null
      * @throws ValueException
+     * @throws PropertyException
      */
-    private static function parseProperty(string $unparsed)
+    private static function parseProperty(string $unparsed): ?Property
     {
-        preg_match(self::REGEX_START . '(' . RFC5545::name . ')([' . RFC5545::PARAMETER_SEPARATOR . RFC5545::VALUE_SEPARATOR . '].+)' . self::REGEX_END, $unparsed, $match);
+        preg_match(self::REGEX_START . '(' . RFC5545::NAME . ')([' . RFC5545::PARAMETER_SEPARATOR . RFC5545::VALUE_SEPARATOR . '].+)' . self::REGEX_END, $unparsed, $match);
         $name = $match[1];
         $parameters = [];
+        $value = null;
         $unparsed = $match[2];
         $cursor = 0;
         $quoted = false;
@@ -179,8 +185,8 @@ class iCalendar implements Parser, Exporter
      */
     private static function getValueType(string $label, array $parameters)
     {
-        if (isset($parameters[RFC5545::ValueDataTypes])) {
-            return $parameters[RFC5545::ValueDataTypes];
+        if (isset($parameters[RFC5545::VALUE_DATA_TYPES])) {
+            return $parameters[RFC5545::VALUE_DATA_TYPES];
         }
         if (isset(RFC5545::PROPERTY_VALUES[$label])) {
             return RFC5545::PROPERTY_VALUES[$label];
@@ -193,9 +199,13 @@ class iCalendar implements Parser, Exporter
      * @param Parameter[] $parameters
      * @param Value|Value[] $value
      * @return Property
+     * @throws PropertyException
      */
     private static function instantiateProperty(string $name, array $parameters = [], $value = null): Property
     {
+        if (empty($value)) {
+            throw new PropertyException('Properties must have a value');
+        }
         if (empty(RFC5545::PROPERTIES[strtoupper($name)])) {
             if (strpos($name, 'X-') === 0) {
                 return new NonStandardProperty($name, $parameters, $value);
@@ -211,12 +221,12 @@ class iCalendar implements Parser, Exporter
 
     /**
      * @param string $unparsed
-     * @return Parameter
+     * @return Parameter|null
      * @throws ValueException
      */
-    private static function parseParameter(string $unparsed)
+    private static function parseParameter(string $unparsed): ?Parameter
     {
-        preg_match(self::REGEX_START . '(' . RFC5545::param_name . ')' . RFC5545::PARAMETER_KEYVALUE_SEPARATOR . '(.*)' . self::REGEX_END, $unparsed, $match);
+        preg_match(self::REGEX_START . '(' . RFC5545::PARAM_NAME . ')' . RFC5545::PARAMETER_KEYVALUE_SEPARATOR . '(.*)' . self::REGEX_END, $unparsed, $match);
         $name = $match[1];
         $value = null;
         $unparsed = $match[2];
@@ -264,10 +274,10 @@ class iCalendar implements Parser, Exporter
     /**
      * @param string|string[] $expectedType
      * @param string $unparsed
-     * @return Value|Value[]
+     * @return Value|null
      * @throws ValueException
      */
-    private static function parseValue($expectedType, string $unparsed)
+    private static function parseValue($expectedType, string $unparsed): ?Value
     {
         $value = null;
         $cursor = 0;
@@ -324,7 +334,8 @@ class iCalendar implements Parser, Exporter
                 return self::instantiateValue($expectedType, $unparsed);
             }
         }
-        return $value;
+        echo $value . PHP_EOL;
+        return self::instantiateValue($expectedType, $value);
     }
 
     /**
@@ -343,7 +354,7 @@ class iCalendar implements Parser, Exporter
         // only one structured type (RecurrenceRule), and it's not included a list of possible types
         if (is_array($expectedType)) {
             foreach ($expectedType as $type) {
-                if (preg_match(self::REGEX_START . RFC5545::PROPERTY_VALUE_DATA_TYPES[$type] . self::REGEX_END, $value)) {
+                if (preg_match(self::REGEX_START . RFC5545::PROPERTY_VALUE_DATA_TYPES[$type] . self::REGEX_END, implode(RFC5545::FIELD_SEPARATOR, $value))) {
                     return new $type($value);
                 }
             }
@@ -408,7 +419,7 @@ class iCalendar implements Parser, Exporter
         $text = $parameter->getName() . RFC5545::PARAMETER_KEYVALUE_SEPARATOR;
         if (is_array($parameter->getValue())) {
             $values = [];
-            foreach ($parameter->getValueIterator() as $value) {
+            foreach ($parameter->getValue() as $value) {
                 array_push($values, self::exportValue($value));
             }
             $text .= implode(RFC5545::LIST_SEPARATOR, $values);

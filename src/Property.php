@@ -9,6 +9,8 @@ use Battis\Calendar\Exceptions\ValueException;
 use Battis\Calendar\Standards\RFC5545;
 use Battis\Calendar\Values\Text;
 use Battis\Calendar\Values\ValueList;
+use ReflectionClass;
+use ReflectionException;
 
 abstract class Property
 {
@@ -170,11 +172,13 @@ abstract class Property
     {
         $match = 'matchParameterName';
         if ($parameter instanceof Parameter) {
-            if (is_string($parameter)) {
+            $match = 'matchParameterInstance';
+        } else try {
+            if (is_string($parameter) && (new ReflectionClass($parameter))->isSubclassOf(Parameter::class)) {
                 $match = 'matchParameterType';
-            } else {
-                $match = 'matchParameterInstance';
             }
+        } catch (ReflectionException $e) {
+            // assume matchParameterName()
         }
         return [
             get_class($this),

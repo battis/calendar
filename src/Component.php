@@ -6,6 +6,8 @@ namespace Battis\Calendar;
 
 use Battis\Calendar\Properties\Component\Relationship\UniqueIdentifier;
 use Battis\Calendar\Standards\RFC5545;
+use ReflectionClass;
+use ReflectionException;
 
 
 abstract class Component
@@ -93,15 +95,21 @@ abstract class Component
         return $name == $p->getName();
     }
 
+    /**
+     * @param Property|string $property
+     * @return array
+     */
     private function determinePropertyMatchCallback($property): array
     {
         $match = 'matchPropertyName';
         if ($property instanceof Property) {
-            if (is_string($property)) {
+            $match = 'matchPropertyInstance';
+        } else try {
+            if (is_string($property) && (new ReflectionClass($property))->isSubclassOf(Property::class)) {
                 $match = 'matchPropertyType';
-            } else {
-                $match = 'matchPropertyInstance';
             }
+        } catch (ReflectionException $e) {
+            // assume matchPropertyName()
         }
         return [
             get_class($this),
