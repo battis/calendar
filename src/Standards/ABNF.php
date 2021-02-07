@@ -3,7 +3,9 @@
 
 namespace Battis\Calendar\Standards;
 
-
+/**
+ * @link https://tools.ietf.org/html/rfc5234 Augmented BNF for Syntax Specifications: ABNF
+ */
 interface ABNF
 {
     const
