@@ -14,13 +14,16 @@
         }
     },
     "require-dev": {
-        "kigkonsult/icalcreator": "2.24",
-        "phpdocumentor/phpdocumentor": "2.9.*",
-        "phpunit/phpunit": "9.*"
+        "kigkonsult/icalcreator": "2.24"
     },
     "require": {
         "ext-mbstring": "*",
         "ext-intl": "*",
-        "php": "^7.1"
+        "php": "^8.0"
+    },
+    "scripts": {
+        "test": "XDEBUG_MODE=coverage ./tools/phpunit --coverage-text --coverage-html=coverage",
+        "docs": "./tools/phpdocumentor -d src -t docs",
+        "analyze": "./tools/phpstan analyze"
     }
 }

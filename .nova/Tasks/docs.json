@@ -1,0 +1,13 @@
+{
+  "actions" : {
+    "build" : {
+      "enabled" : true,
+      "script" : "composer run-script docs"
+    },
+    "run" : {
+      "enabled" : true,
+      "script" : "composer run-script docs\nopen docs\/index.html"
+    }
+  },
+  "openLogOnRun" : "start"
+}
